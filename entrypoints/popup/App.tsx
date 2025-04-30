@@ -1,6 +1,12 @@
+import { Button } from '@/components/ui/button'
+
 function App() {
   return (
-    <h1 className="p-4 text-2xl font-bold">Hello World</h1>
+    <div className="p-4">
+      <Button>
+        test
+      </Button>
+    </div>
   )
 }
 
