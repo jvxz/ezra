@@ -1,0 +1,26 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Project Overview
+
+This project is a browser extension built using WXT (Web Extension Tools) and React.
+
+## Key Directories
+- [entrypoints/](mdc:entrypoints/) - Contains all extension entry points (background scripts, content scripts, popup)
+- [components/](mdc:components/) - Reusable React components
+- [lib/](mdc:lib/) - Utility functions, hooks, and helper code
+- [assets/](mdc:assets/) - Static assets like images
+- [public/](mdc:public/) - Public assets that are copied as-is to the extension
+
+## Configuration Files
+- [wxt.config.ts](mdc:wxt.config.ts) - WXT configuration
+- [tsconfig.json](mdc:tsconfig.json) - TypeScript configuration
+- [components.json](mdc:components.json) - Component configuration
+- [package.json](mdc:package.json) - Project dependencies and scripts
+
+## Build & Development
+Run development server: `npm run dev`
+Build the extension: `npm run build`
+Build for Firefox: `npm run build:firefox`

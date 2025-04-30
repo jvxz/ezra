@@ -1,0 +1,21 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Extension Entrypoints
+
+The extension has several entry points that define different parts of its functionality:
+
+## Background
+- [entrypoints/background.ts](mdc:entrypoints/background.ts) - Main background script entry
+- [entrypoints/background/](mdc:entrypoints/background/) - Additional background script modules
+
+## Content Scripts
+- [entrypoints/content.ts](mdc:entrypoints/content.ts) - Main content script injected into web pages
+
+## UI Components
+- [entrypoints/popup/](mdc:entrypoints/popup/) - Extension popup UI
+- [entrypoints/dashboard/](mdc:entrypoints/dashboard/) - Dashboard page UI
+
+These entry points follow WXT's convention for automatically generating the extension's manifest and bundling each entry point separately.

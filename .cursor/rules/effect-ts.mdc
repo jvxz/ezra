@@ -1,0 +1,59 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Effect (effect-ts)
+
+[Effect](https://github.com/Effect-TS/effect) is a powerful functional programming library for TypeScript that provides end-to-end type safety and composable error handling.
+
+## Key Usage Areas
+
+### Error Handling
+Effect provides a robust error handling mechanism that replaces traditional try/catch with a fully type-safe approach:
+
+```typescript
+import { Effect } from "effect"
+
+// Example of typesafe error handling
+const fetchData = Effect.tryPromise({
+  try: () => fetch("/api/data").then(res => res.json()),
+  catch: (error) => new FetchError({ cause: error })
+})
+```
+
+### Duration & Time
+The library offers utilities for working with durations and time in a type-safe manner:
+
+```typescript
+import { Duration } from "effect"
+
+// Example of type-safe duration
+const timeout = Duration.seconds(30)
+const delayedOperation = Effect.delay(myEffect, timeout)
+```
+
+### Schema Validation
+Effect includes schema validation capabilities through Effect Schema:
+
+```typescript
+import { Schema } from "@effect/schema"
+
+// Example of schema validation
+const UserSchema = Schema.struct({
+  id: Schema.number,
+  name: Schema.string,
+  email: Schema.string.pipe(Schema.pattern(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i))
+})
+
+const validateUser = (data: unknown) => Schema.decodeUnknown(UserSchema)(data)
+```
+
+## Project Integration
+When implementing new features that require error handling, time-based operations, or data validation, consider using Effect's utilities for better type safety and composability.
+
+### Recommended Imports
+- `import { Effect } from "effect"` - Core functionality  
+- `import { Duration } from "effect"` - Time and duration utilities
+- `import { Schema } from "@effect/schema"` - Schema validation
+- `import { Data } from "effect"` - Typesafe data structures

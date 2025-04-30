@@ -1,0 +1,21 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Components
+
+The project uses React components organized as follows:
+
+## UI Components
+The [components/ui/](mdc:components/ui/) directory contains reusable UI components following a component library pattern:
+
+- [components/ui/button.tsx](mdc:components/ui/button.tsx) - Button component with various styles and variants
+- [components/ui/card.tsx](mdc:components/ui/card.tsx) - Card container component
+- [components/ui/spinner.tsx](mdc:components/ui/spinner.tsx) - Loading spinner component
+- [components/ui/table.tsx](mdc:components/ui/table.tsx) - Table component
+
+## Feature Components
+- [components/theme-toggle.tsx](mdc:components/theme-toggle.tsx) - Toggle component for switching between light and dark themes
+
+These components use Tailwind CSS for styling and are built following modern React patterns including composition and hooks.

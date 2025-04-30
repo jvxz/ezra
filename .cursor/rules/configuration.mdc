@@ -1,0 +1,25 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Configuration Files
+
+The project uses several configuration files to define its behavior:
+
+## WXT Configuration
+- [wxt.config.ts](mdc:wxt.config.ts) - Configures the WXT build system, extension permissions, and modules
+
+## TypeScript Configuration
+- [tsconfig.json](mdc:tsconfig.json) - TypeScript compiler options and project settings
+
+## UI Configuration
+- [components.json](mdc:components.json) - Configuration for UI components system
+- [postcss.config.mjs](mdc:postcss.config.mjs) - PostCSS configuration for processing CSS
+- [tailwind.config.js](mdc:tailwind.config.js) - Tailwind CSS configuration
+
+## Linting and Formatting
+- [eslint.config.mjs](mdc:eslint.config.mjs) - ESLint configuration for code linting
+
+## Browser Extension Configuration
+- [web-ext.config.ts](mdc:web-ext.config.ts) - Configuration for web-ext, a tool for building/testing extensions

@@ -1,0 +1,19 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Library and Utilities
+
+The [lib/](mdc:lib/) directory contains utility functions, hooks, and helper code:
+
+## Styles
+- [lib/styles.ts](mdc:lib/styles.ts) - Utility functions for styling and class merging
+
+## Hooks
+- [lib/hooks/](mdc:lib/hooks/) - Custom React hooks for reusable stateful logic
+
+## Storage
+- [lib/local-storage/](mdc:lib/local-storage/) - Utilities for working with browser extension storage APIs
+
+These utilities help maintain clean, DRY code throughout the extension and abstract browser-specific APIs into reusable functions.
