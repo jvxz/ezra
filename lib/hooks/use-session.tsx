@@ -1,10 +1,10 @@
 import { sendMessage } from '@/entrypoints/background/messages'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { sessionStorage } from '../storage/sessions'
-import { useErrorStore } from '../store/error'
+import { useStatusStore } from '../store/status'
 
 function useSession() {
-  const { setError } = useErrorStore()
+  const { setStatus } = useStatusStore()
 
   const { data, isLoading } = useQuery({
     queryKey: ['session'],
@@ -16,12 +16,18 @@ function useSession() {
       const res = await sendMessage('handleStartSession', undefined)
 
       if (!res.success) {
-        return setError({
+        return setStatus({
           message: res.message,
+          timestamp: Date.now(),
+          type: 'error',
         })
       }
 
-      return res.message
+      return setStatus({
+        message: res.message,
+        timestamp: Date.now(),
+        type: 'success',
+      })
     },
   })
 
@@ -30,12 +36,18 @@ function useSession() {
       const res = await sendMessage('handleStopSession', undefined)
 
       if (!res.success) {
-        return setError({
+        return setStatus({
           message: res.message,
+          timestamp: Date.now(),
+          type: 'error',
         })
       }
 
-      return res.message
+      return setStatus({
+        message: res.message,
+        timestamp: Date.now(),
+        type: 'success',
+      })
     },
   })
 
