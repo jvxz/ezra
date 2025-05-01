@@ -22,13 +22,13 @@ const program = Effect.gen(function* () {
   }
 
   const draft: Session = {
+    id: crypto.randomUUID(),
     description: 'No tasks',
+    start: Date.now(),
+    end: 0,
     duration: 0,
     earnings: 0,
     efficiency: 0,
-    end: 0,
-    id: crypto.randomUUID(),
-    start: 0,
     tasks: [],
   }
 

@@ -9,14 +9,20 @@ class StopSessionError extends Data.TaggedError('StopSessionError')<{
   message?: string
 }> {}
 
-const program = Effect.gen(function* () {
-  const currentSession = yield* Effect.tryPromise({
+const program = Effect.gen(function* (_) {
+  const currentSession = yield* _(Effect.tryPromise({
     try: async () => sessionStorage.getValue(),
     catch: e => new StopSessionError({
       cause: e,
       message: 'Failed to get session storage',
     }),
-  })
+  }), Effect.map((s) => {
+    s.data.end = Date.now()
+    s.data.duration = s.data.end - s.data.start
+    s.data.earnings = s.data.duration * 100
+    s.data.efficiency = s.data.earnings / s.data.duration
+    return s
+  }))
 
   if (!currentSession.active) {
     return new MsgResponse(false, 'Session not active')
