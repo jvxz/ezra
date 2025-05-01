@@ -43,7 +43,7 @@ const program = Effect.gen(function* () {
     }),
   })
 
-  return new MsgResponse(true, `Session stopped: ${JSON.stringify(draft)}`)
+  return new MsgResponse(true, 'Session stopped')
 })
 
 export async function handleStopSession() {

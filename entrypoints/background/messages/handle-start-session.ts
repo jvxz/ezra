@@ -43,7 +43,7 @@ const program = Effect.gen(function* () {
     }),
   })
 
-  return new MsgResponse(true, `Session started: ${JSON.stringify(draft)}`)
+  return new MsgResponse(true, 'Session started')
 })
 
 export async function handleStartSession() {
