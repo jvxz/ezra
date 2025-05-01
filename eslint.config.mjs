@@ -96,5 +96,6 @@ export default antfu({
     'ts/strict-boolean-expressions': 'off',
     'node/prefer-global/process': 'off',
     'react-refresh/only-export-components': 'off',
+    'unicorn/throw-new-error': 'off',
   },
 })
