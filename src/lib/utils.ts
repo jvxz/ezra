@@ -1,6 +1,8 @@
 import type { ClassValue } from 'clsx'
+import { MsgResponse } from '@/entrypoints/background/messages'
 import { clsx } from 'clsx'
 import * as d from 'date-fns-tz'
+import { Effect } from 'effect'
 import { twMerge } from 'tailwind-merge'
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -16,4 +18,10 @@ export function formatTimestamp(timestampInMillis: number, type: 'date' | 'time'
     case 'time':
       return d.formatInTimeZone(timestampInMillis, tz, 'h:mm a')
   }
+}
+
+export async function gen<T, E extends { message?: string, cause?: unknown }>(program: Effect.Effect<T, E>) {
+  return program
+    .pipe(Effect.catchAll(e => Effect.succeed(new MsgResponse(false, `${e.message || 'Unknown error'}: ${String(e.cause || 'Unknown cause')}`))))
+    .pipe(Effect.runPromise)
 }
