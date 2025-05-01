@@ -3,21 +3,25 @@ import { immer } from 'zustand/middleware/immer'
 
 interface State {
   message: string
+  timestamp: number
+  type: 'error' | 'success' | 'info'
 }
 
 interface Actions {
   reset: () => void
-  setError: (state: State) => void
+  setStatus: (state: State) => void
 }
 
 const initialState: State = {
   message: '',
+  timestamp: 0,
+  type: 'info',
 }
 
-const useErrorStore = create(immer<State & Actions>(set => ({
+const useStatusStore = create(immer<State & Actions>(set => ({
   ...initialState,
   reset: () => set(initialState),
-  setError: (state: State) => set(state),
+  setStatus: (state: State) => set(state),
 })))
 
-export { useErrorStore }
+export { useStatusStore }
