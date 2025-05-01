@@ -27,7 +27,7 @@ const program = Effect.gen(function* () {
     earnings: 0,
     efficiency: 0,
     end: 0,
-    id: '',
+    id: crypto.randomUUID(),
     start: 0,
     tasks: [],
   }
