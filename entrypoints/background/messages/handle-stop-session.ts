@@ -1,6 +1,7 @@
 import type { Session } from '@/lib/storage/sessions'
 import { db } from '@/lib/db'
 import { sessionStorage } from '@/lib/storage/sessions'
+import { gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
 import { MsgResponse } from '.'
 
@@ -62,9 +63,5 @@ const program = Effect.gen(function* (_) {
 })
 
 export async function handleStopSession() {
-  return program
-    .pipe(Effect.catchTags({
-      StopSessionError: e => Effect.succeed(new MsgResponse(false, `${e.message}: ${String(e.cause)}`)),
-    }))
-    .pipe(Effect.runPromise)
+  return gen(program)
 }

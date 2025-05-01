@@ -1,5 +1,6 @@
 import type { Session } from '@/lib/storage/sessions'
 import { sessionStorage } from '@/lib/storage/sessions'
+import { gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
 import { MsgResponse } from '.'
 
@@ -47,9 +48,5 @@ const program = Effect.gen(function* () {
 })
 
 export async function handleStartSession() {
-  return program
-    .pipe(Effect.catchTags({
-      StartSessionError: e => Effect.succeed(new MsgResponse(false, `${e.message}: ${e.cause}`)),
-    }))
-    .pipe(Effect.runPromise)
+  return gen(program)
 }
