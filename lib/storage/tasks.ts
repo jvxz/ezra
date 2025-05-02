@@ -2,7 +2,7 @@ export interface Task {
   id: string
   description: string
   aet: number
-  start: string
+  start: number
   duration: number
   efficiency: number
   earnings: number
@@ -22,7 +22,7 @@ export const taskStorage = storage.defineItem<TaskStorage>(
         id: '',
         description: '',
         aet: 0,
-        start: '',
+        start: 0,
         duration: 0,
         efficiency: 0,
         earnings: 0,
