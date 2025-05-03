@@ -59,7 +59,7 @@ function program(data: TaskStartData, jobs: JobScheduler) {
   })
 }
 
-let curr = 0
+let currTime = 0
 
 async function handleTaskTimer(jobs: JobScheduler) {
   await jobs.scheduleJob({
@@ -67,17 +67,17 @@ async function handleTaskTimer(jobs: JobScheduler) {
     type: 'interval',
     duration: 1000,
     execute: async () => {
-      curr += 1
+      currTime += 1
 
       void browser.action.setBadgeText({
-        text: `${curr}`,
+        text: `${currTime}`,
       })
 
-      if (!(curr % 5)) {
+      if (!(currTime % 5)) {
         const currentTask = await taskStorage.getValue()
 
         await taskStorage.setValue(create(currentTask, (draft) => {
-          draft.data.duration = curr
+          draft.data.duration = currTime
         }))
       }
     },
