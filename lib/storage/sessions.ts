@@ -16,21 +16,4 @@ export interface SessionStorage {
   data: Session
 }
 
-export const sessionStorage = storage.defineItem<SessionStorage>(
-  'local:session',
-  {
-    fallback: {
-      active: false,
-      data: {
-        id: '',
-        description: 'No tasks',
-        start: 0,
-        end: 0,
-        duration: 0,
-        efficiency: 0,
-        earnings: 0,
-        tasks: [],
-      },
-    },
-  },
-)
+export const sessionStorage = storage.defineItem<Session>('local:session')

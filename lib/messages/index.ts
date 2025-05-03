@@ -1,4 +1,5 @@
 import type { Task } from '@/lib/storage/tasks'
+import type { Session } from '../storage/sessions'
 import { defineExtensionMessaging } from '@webext-core/messaging'
 
 export class MsgResponse<T = unknown> {
@@ -12,6 +13,7 @@ interface ProtocolMap {
   handleStopSession: () => Promise<MsgResponse>
   handleTaskStart: (data: TaskStartData) => Promise<MsgResponse>
   handleTaskStop: () => Promise<MsgResponse>
+  getLiveData: (type: 'sessions' | 'tasks') => Promise<MsgResponse<Session[] | Task[] | unknown>>
 }
 
 // eslint-disable-next-line ts/unbound-method

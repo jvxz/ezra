@@ -1,9 +1,10 @@
-import type { Session } from '@/lib/storage/sessions'
 import { db } from '@/lib/db'
 import { sessionStorage } from '@/lib/storage/sessions'
 import { gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
+import { create } from 'mutative'
 import { MsgResponse } from '.'
+import { statusStorage } from '../storage/status'
 
 class StopSessionError extends Data.TaggedError('StopSessionError')<{
   cause?: unknown
@@ -11,6 +12,18 @@ class StopSessionError extends Data.TaggedError('StopSessionError')<{
 }> {}
 
 const program = Effect.gen(function* (_) {
+  const status = yield* _(Effect.tryPromise({
+    try: async () => statusStorage.getValue(),
+    catch: e => new StopSessionError({
+      cause: e,
+      message: 'Failed to get status storage',
+    }),
+  }))
+
+  if (!status.session) {
+    return new MsgResponse(false, 'Session not active')
+  }
+
   const currentSession = yield* _(Effect.tryPromise({
     try: async () => sessionStorage.getValue(),
     catch: e => new StopSessionError({
@@ -18,30 +31,15 @@ const program = Effect.gen(function* (_) {
       message: 'Failed to get session storage',
     }),
   }), Effect.map((s) => {
-    s.data.end = Date.now()
-    s.data.duration = s.data.end - s.data.start
-    s.data.earnings = s.data.duration * 100
-    s.data.efficiency = s.data.earnings / s.data.duration
+    s.end = Date.now()
+    s.duration = s.end - s.start
+    s.earnings = s.duration * 100
+    s.efficiency = s.earnings / s.duration
     return s
   }))
 
-  if (!currentSession.active) {
-    return new MsgResponse(false, 'Session not active')
-  }
-
-  const draft: Session = {
-    description: 'No tasks',
-    duration: 0,
-    earnings: 0,
-    efficiency: 0,
-    end: 0,
-    id: '',
-    start: 0,
-    tasks: [],
-  }
-
   yield* Effect.tryPromise({
-    try: async () => db.sessions.add(currentSession.data),
+    try: async () => db.sessions.add(currentSession),
     catch: e => new StopSessionError({
       cause: e,
       message: 'Failed to add session to DB. Session was not stopped',
@@ -49,13 +47,20 @@ const program = Effect.gen(function* (_) {
   })
 
   yield* Effect.tryPromise({
-    try: async () => sessionStorage.setValue({
-      active: false,
-      data: draft,
-    }),
+    try: async () => sessionStorage.removeValue(),
     catch: e => new StopSessionError({
       cause: e,
       message: 'Failed to stop session',
+    }),
+  })
+
+  yield* Effect.tryPromise({
+    try: async () => statusStorage.setValue(create(status, (draft) => {
+      draft.session = false
+    })),
+    catch: e => new StopSessionError({
+      cause: JSON.stringify(e),
+      message: 'Failed to set status storage',
     }),
   })
 

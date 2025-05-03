@@ -1,5 +1,6 @@
 import type { TaskStartData } from '../../lib/messages'
 import type { TaskStopAction } from '../../lib/messages/handle-task-stop'
+import { handleGetLiveData } from '@/lib/messages/get-live-data'
 import { defineJobScheduler } from '@webext-core/job-scheduler'
 import { onMessage } from '../../lib/messages'
 import { handleStartSession } from '../../lib/messages/handle-start-session'
@@ -26,5 +27,7 @@ export default defineBackground({
     onMessage('handleStopSession', async () => handleStopSession())
     onMessage('handleTaskStart', async _msg => handleTaskStart(temp, jobs))
     onMessage('handleTaskStop', async () => handleTaskStop(tempAction, jobs))
+
+    onMessage('getLiveData', async msg => handleGetLiveData(msg.data))
   },
 })

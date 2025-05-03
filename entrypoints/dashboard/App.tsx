@@ -1,14 +1,13 @@
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { db } from '@/lib/db'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
+import { useSession } from '@/lib/hooks/use-session'
 import { useTask } from '@/lib/hooks/use-task'
 import { formatTimestamp } from '@/src/lib/utils'
-import { useLiveQuery } from 'dexie-react-hooks'
 import { Suspense } from 'react'
 
 function App() {
-  const sessions = useLiveQuery(async () => db.sessions.toArray())
+  const { data: sessions } = useSession()
   const selectedItems = useDragSelect()
 
   const sortedSessions = useMemo(() => sessions?.sort((a, b) => b.start - a.start), [sessions])
@@ -85,7 +84,7 @@ function CopyableTableCell({ value }: { value: string | number }) {
 function TaskDuration() {
   const { data: taskData } = useTask()
 
-  return <p>{taskData?.data.duration}</p>
+  return <p>{taskData?.duration}</p>
 }
 
 export default App
