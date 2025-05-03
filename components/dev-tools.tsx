@@ -13,6 +13,7 @@ function DevTools() {
       <Button onClick={() => stopSession()}>stop session</Button>
       <Button onClick={() => startTask()}>start task</Button>
       <Button onClick={() => stopTask()}>stop task</Button>
+      <Button onClick={() => void browser.storage.local.clear()}>clear storage</Button>
       <ThemeToggle />
     </div>
   )
