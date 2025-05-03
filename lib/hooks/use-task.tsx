@@ -1,4 +1,4 @@
-import { sendMessage } from '@/entrypoints/background/messages'
+import { sendMessage } from '@/lib/messages'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { taskStorage } from '../storage/tasks'
 import { useStatusStore } from '../store/status'

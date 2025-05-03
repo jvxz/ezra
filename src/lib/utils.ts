@@ -1,5 +1,5 @@
 import type { ClassValue } from 'clsx'
-import { MsgResponse } from '@/entrypoints/background/messages'
+import { MsgResponse } from '@/lib/messages'
 import { clsx } from 'clsx'
 import * as d from 'date-fns-tz'
 import { Effect } from 'effect'
