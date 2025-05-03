@@ -15,4 +15,23 @@ export default defineConfig({
       'notifications',
     ],
   },
+  react: {
+    vite: {
+      babel: {
+        plugins: [['babel-plugin-react-compiler', {
+        }]],
+      },
+    },
+  },
+  // vite: () => {
+  //   return {
+  //     plugins: [
+  //       react({
+  //         babel: {
+  //           plugins: ['babel-plugin-react-compiler'],
+  //         },
+  //       }),
+  //     ],
+  //   }
+  // },
 })
