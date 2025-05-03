@@ -1,4 +1,5 @@
 import type { TaskStartData } from './messages'
+import { defineJobScheduler } from '@webext-core/job-scheduler'
 import { handleTaskSubmit } from './actions/handle-task-submit'
 import { onMessage } from './messages'
 import { handleStartSession } from './messages/handle-start-session'
@@ -14,14 +15,13 @@ const temp: TaskStartData = {
 
 export default defineBackground({
   main: () => {
-    // const jobs = defineJobScheduler()
+    const jobs = defineJobScheduler()
 
     void handleTaskSubmit()
 
     onMessage('handleStartSession', async () => handleStartSession())
     onMessage('handleStopSession', async () => handleStopSession())
-    // onMessage('handleTaskStart', async (msg) => handleTaskStart(msg.data))
-    onMessage('handleTaskStart', async () => handleTaskStart(temp))
+    onMessage('handleTaskStart', async _msg => handleTaskStart(temp, jobs))
     onMessage('handleTaskStop', async () => handleTaskStop())
   },
 })

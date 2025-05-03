@@ -1,8 +1,10 @@
 import type { Task } from '@/lib/storage/tasks'
+import type { JobScheduler } from '@webext-core/job-scheduler'
 import type { TaskStartData } from '.'
 import { taskStorage } from '@/lib/storage/tasks'
 import { gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
+import { create } from 'mutative'
 import { MsgResponse } from '.'
 
 class TaskStartError extends Data.TaggedError('TaskStartError')<{
@@ -10,7 +12,7 @@ class TaskStartError extends Data.TaggedError('TaskStartError')<{
   message?: string
 }> {}
 
-function program(data: TaskStartData) {
+function program(data: TaskStartData, jobs: JobScheduler) {
   return Effect.gen(function* () {
     const currentTask = yield* Effect.tryPromise({
       try: async () => taskStorage.getValue(),
@@ -45,10 +47,44 @@ function program(data: TaskStartData) {
       }),
     })
 
+    yield* Effect.tryPromise({
+      try: async () => handleTaskTimer(jobs),
+      catch: e => new TaskStartError({
+        cause: e,
+        message: 'Failed to start task timer',
+      }),
+    })
+
     return new MsgResponse(true, 'Task started')
   })
 }
 
-export async function handleTaskStart(data: TaskStartData) {
-  return gen(program(data))
+let curr = 0
+
+async function handleTaskTimer(jobs: JobScheduler) {
+  await jobs.scheduleJob({
+    id: 'task-timer',
+    type: 'interval',
+    duration: 1000,
+    execute: async () => {
+      curr += 1
+
+      void browser.action.setBadgeText({
+        text: `${curr}`,
+      })
+
+      if (!(curr % 5)) {
+        const currentTask = await taskStorage.getValue()
+
+        await taskStorage.setValue(create(currentTask, (draft) => {
+          draft.data.duration = curr
+        }))
+      }
+    },
+
+  })
+}
+
+export async function handleTaskStart(data: TaskStartData, jobs: JobScheduler) {
+  return gen(program(data, jobs))
 }
