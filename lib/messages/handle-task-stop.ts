@@ -22,7 +22,9 @@ const resettedTask: Task = {
   aet: 0,
 }
 
-function program(jobs: JobScheduler) {
+export type TaskStopAction = 'submit' | 'release'
+
+function program(action: TaskStopAction, jobs: JobScheduler) {
   return Effect.gen(function* (_) {
     const currentTask = yield* Effect.tryPromise({
       try: async () => taskStorage.getValue(),
@@ -43,26 +45,28 @@ function program(jobs: JobScheduler) {
     if (!currentTask.active) return new MsgResponse(false, 'Task not active')
     if (!currentSession.active) return new MsgResponse(false, 'Session not active')
 
-    const updatedSession = yield* _(
-      Effect.succeed(create(currentTask.data, (draft) => {
-        draft.duration = Date.now() - draft.start
-      })),
-      Effect.map(task =>
-        create(currentSession.data, (draft) => {
-          draft.tasks.push(task)
+    if (action === 'submit') {
+      const updatedSession = yield* _(
+        Effect.succeed(create(currentTask.data, (draft) => {
+          draft.duration = Date.now() - draft.start
         })),
-    )
+        Effect.map(task =>
+          create(currentSession.data, (draft) => {
+            draft.tasks.push(task)
+          })),
+      )
 
-    yield* Effect.tryPromise({
-      try: async () => sessionStorage.setValue({
-        active: false,
-        data: updatedSession,
-      }),
-      catch: e => new TaskStopError({
-        cause: e,
-        message: 'Failed to update session with task',
-      }),
-    })
+      yield* Effect.tryPromise({
+        try: async () => sessionStorage.setValue({
+          active: false,
+          data: updatedSession,
+        }),
+        catch: e => new TaskStopError({
+          cause: e,
+          message: 'Failed to update session with task',
+        }),
+      })
+    }
 
     yield* Effect.tryPromise({
       try: async () => taskStorage.setValue({
@@ -97,6 +101,6 @@ function program(jobs: JobScheduler) {
   })
 }
 
-export async function handleTaskStop(jobs: JobScheduler) {
-  return gen(program(jobs))
+export async function handleTaskStop(action: TaskStopAction, jobs: JobScheduler) {
+  return gen(program(action, jobs))
 }

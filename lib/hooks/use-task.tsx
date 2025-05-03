@@ -1,5 +1,5 @@
 import { sendMessage } from '@/lib/messages'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { taskStorage } from '../storage/tasks'
 import { useStatusStore } from '../store/status'
 
@@ -10,6 +10,7 @@ const task = {
 }
 
 function useTask() {
+  const qc = useQueryClient()
   const { setStatus } = useStatusStore()
 
   const { data, isLoading } = useQuery({
@@ -17,7 +18,15 @@ function useTask() {
     queryFn: async () => taskStorage.getValue(),
   })
 
-  const { mutate: start } = useMutation({
+  useEffect(() => {
+    const end = taskStorage.watch(() => void qc.invalidateQueries({
+      queryKey: ['task'],
+    }))
+
+    return () => end()
+  }, [])
+
+  const { mutate: _debugStart } = useMutation({
     mutationFn: async () => {
       const res = await sendMessage('handleTaskStart', task)
 
@@ -37,7 +46,7 @@ function useTask() {
     },
   })
 
-  const { mutate: stop } = useMutation({
+  const { mutate: _debugStop } = useMutation({
     mutationFn: async () => {
       const res = await sendMessage('handleTaskStop', undefined)
 
@@ -60,8 +69,8 @@ function useTask() {
   return {
     data,
     isLoading,
-    start,
-    stop,
+    _debugStart,
+    _debugStop,
   }
 }
 

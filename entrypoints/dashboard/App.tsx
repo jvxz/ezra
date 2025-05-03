@@ -2,6 +2,7 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, Con
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { db } from '@/lib/db'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
+import { useTask } from '@/lib/hooks/use-task'
 import { formatTimestamp } from '@/src/lib/utils'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Suspense } from 'react'
@@ -14,6 +15,7 @@ function App() {
 
   return (
     <div className="flex h-screen flex-col items-center justify-center">
+      <TaskDuration />
       <p>{selectedItems.size}</p>
       <div className="h-[800px] w-[700px] overflow-auto rounded border select-none">
         <Table className="w-full">
@@ -78,6 +80,12 @@ function CopyableTableCell({ value }: { value: string | number }) {
       </ContextMenuContent>
     </ContextMenu>
   )
+}
+
+function TaskDuration() {
+  const { data: taskData } = useTask()
+
+  return <p>{taskData?.data.duration}</p>
 }
 
 export default App

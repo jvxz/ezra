@@ -61,6 +61,7 @@ function program(data: TaskStartData, jobs: JobScheduler) {
 
 let currTime = 0
 
+// TODO: prevent constant storage updates
 async function handleTaskTimer(jobs: JobScheduler) {
   await jobs.scheduleJob({
     id: 'task-timer',
@@ -73,17 +74,41 @@ async function handleTaskTimer(jobs: JobScheduler) {
         text: `${currTime}`,
       })
 
-      if (!(currTime % 5)) {
-        const currentTask = await taskStorage.getValue()
+      const currentTask = await taskStorage.getValue()
 
-        await taskStorage.setValue(create(currentTask, (draft) => {
-          draft.data.duration = currTime
-        }))
-      }
+      await taskStorage.setValue(create(currentTask, (draft) => {
+        draft.data.duration = currTime
+      }))
     },
 
   })
 }
+
+// let currTime = 0
+
+// async function handleTaskTimer(jobs: JobScheduler) {
+//   await jobs.scheduleJob({
+//     id: 'task-timer',
+//     type: 'interval',
+//     duration: 1000,
+//     execute: async () => {
+//       currTime += 1
+
+//       void browser.action.setBadgeText({
+//         text: `${currTime}`,
+//       })
+
+//       if (!(currTime % 5)) {
+//         const currentTask = await taskStorage.getValue()
+
+//         await taskStorage.setValue(create(currentTask, (draft) => {
+//           draft.data.duration = currTime
+//         }))
+//       }
+//     },
+
+//   })
+// }
 
 export async function handleTaskStart(data: TaskStartData, jobs: JobScheduler) {
   return gen(program(data, jobs))
