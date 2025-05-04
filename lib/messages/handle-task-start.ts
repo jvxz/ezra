@@ -1,7 +1,7 @@
 import type { Task } from '@/lib/storage/tasks'
 import type { JobScheduler } from '@webext-core/job-scheduler'
 import type { TaskStartData } from '.'
-import { taskDraft, taskStorage } from '@/lib/storage/tasks'
+import { taskStorage } from '@/lib/storage/tasks'
 import { gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
@@ -86,7 +86,7 @@ async function handleTaskTimer(jobs: JobScheduler) {
       const task = await taskStorage.getValue()
       if (!task) return
 
-      await taskStorage.setValue(create(taskDraft, (draft) => {
+      await taskStorage.setValue(create(task, (draft) => {
         draft.duration = task.duration + 1
       }))
 

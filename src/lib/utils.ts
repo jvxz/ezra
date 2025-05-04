@@ -2,7 +2,7 @@ import type { ClassValue } from 'clsx'
 import { MsgResponse } from '@/lib/messages'
 import { clsx } from 'clsx'
 import * as dtz from 'date-fns-tz'
-import { Effect } from 'effect'
+import { Duration, Effect } from 'effect'
 import { twMerge } from 'tailwind-merge'
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -18,6 +18,24 @@ export function formatTimestamp(timestampInMillis: number, type: 'date' | 'time'
     case 'time':
       return dtz.formatInTimeZone(timestampInMillis, tz, 'h:mm a')
   }
+}
+
+export function formatDuration(durationInSeconds: number, unit: 'hrs' | 'mins' | 'secs') {
+  let dur: Duration.Duration
+
+  switch (unit) {
+    case 'hrs':
+      dur = Duration.hours(durationInSeconds)
+      break
+    case 'mins':
+      dur = Duration.minutes(durationInSeconds)
+      break
+    case 'secs':
+      dur = Duration.seconds(durationInSeconds)
+      break
+  }
+
+  return Duration.format(dur)
 }
 
 export async function gen<T, E extends { message?: string, cause?: unknown }>(program: Effect.Effect<T, E>) {

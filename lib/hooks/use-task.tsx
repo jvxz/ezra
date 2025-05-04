@@ -3,12 +3,6 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { taskStorage } from '../storage/tasks'
 import { useStatusStore } from '../store/status'
 
-const task = {
-  id: '1',
-  description: 'test',
-  aet: 100,
-}
-
 function useTask() {
   const qc = useQueryClient()
   const { setStatus } = useStatusStore()
@@ -28,7 +22,11 @@ function useTask() {
 
   const { mutate: _debugStart } = useMutation({
     mutationFn: async () => {
-      const res = await sendMessage('handleTaskStart', task)
+      const res = await sendMessage('handleTaskStart', {
+        aet: 0.2,
+        description: 'test',
+        id: crypto.randomUUID(),
+      })
 
       if (!res.success) {
         return setStatus({
