@@ -1,6 +1,9 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useSession } from '@/lib/hooks/use-session'
+import { calcEarnings } from '@/src/lib/utils'
+
+const rate = 15
 
 function InfoCardSession() {
   const { currentSession } = useSession()
@@ -30,7 +33,9 @@ function InfoCardSession() {
           </div>
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Total earnings</h2>
-            <div className="text-xl font-medium">$32</div>
+            <div className="text-xl font-medium">
+              {`$${calcEarnings(currentSession.data?.duration ?? 0, rate)}`}
+            </div>
           </div>
         </div>
       </CardContent>

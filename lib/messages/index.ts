@@ -12,7 +12,7 @@ interface ProtocolMap {
   handleStartSession: () => Promise<MsgResponse>
   handleStopSession: () => Promise<MsgResponse>
   handleTaskStart: (data: TaskStartData) => Promise<MsgResponse>
-  handleTaskStop: () => Promise<MsgResponse>
+  handleTaskStop: (rate: number) => Promise<MsgResponse>
   getLiveData: (type: 'sessions' | 'tasks') => Promise<MsgResponse<Session[] | Task[] | unknown>>
 }
 

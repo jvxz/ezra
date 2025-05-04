@@ -26,7 +26,7 @@ export default defineBackground({
     onMessage('handleStartSession', async () => handleStartSession())
     onMessage('handleStopSession', async () => handleStopSession())
     onMessage('handleTaskStart', async _msg => handleTaskStart(temp, jobs))
-    onMessage('handleTaskStop', async () => handleTaskStop(tempAction, jobs))
+    onMessage('handleTaskStop', async (msg) => handleTaskStop(tempAction, msg.data, jobs))
 
     onMessage('getLiveData', async msg => handleGetLiveData(msg.data))
   },

@@ -47,7 +47,7 @@ function TableSessions() {
                   value={item.duration}
                 />
                 <CopyableTableCell
-                  value={item.earnings}
+                  value={`$${item.earnings}`}
                 />
                 <CopyableTableCell
                   value={item.efficiency}

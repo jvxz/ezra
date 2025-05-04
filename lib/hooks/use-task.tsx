@@ -48,7 +48,8 @@ function useTask() {
 
   const { mutate: _debugStop } = useMutation({
     mutationFn: async () => {
-      const res = await sendMessage('handleTaskStop', undefined)
+      // TODO: get rate from user
+      const res = await sendMessage('handleTaskStop', 15)
 
       if (!res.success) {
         return setStatus({

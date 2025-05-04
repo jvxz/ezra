@@ -1,7 +1,7 @@
 import type { ClassValue } from 'clsx'
 import { MsgResponse } from '@/lib/messages'
 import { clsx } from 'clsx'
-import * as d from 'date-fns-tz'
+import * as dtz from 'date-fns-tz'
 import { Effect } from 'effect'
 import { twMerge } from 'tailwind-merge'
 
@@ -14,9 +14,9 @@ export function cn(...inputs: ClassValue[]) {
 export function formatTimestamp(timestampInMillis: number, type: 'date' | 'time') {
   switch (type) {
     case 'date':
-      return d.formatInTimeZone(timestampInMillis, tz, 'MMM dd, yyyy')
+      return dtz.formatInTimeZone(timestampInMillis, tz, 'MMM dd, yyyy')
     case 'time':
-      return d.formatInTimeZone(timestampInMillis, tz, 'h:mm a')
+      return dtz.formatInTimeZone(timestampInMillis, tz, 'h:mm a')
   }
 }
 
@@ -24,4 +24,9 @@ export async function gen<T, E extends { message?: string, cause?: unknown }>(pr
   return program
     .pipe(Effect.catchAll(e => Effect.succeed(new MsgResponse(false, `${e.message || 'Unknown error'}: ${String(e.cause || 'Unknown cause')}`))))
     .pipe(Effect.runPromise)
+}
+
+export function calcEarnings(durationInSeconds: number, rate: number) {
+  const hrs = durationInSeconds / 3600
+  return Number((hrs * rate).toFixed(2))
 }

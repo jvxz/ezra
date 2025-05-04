@@ -1,7 +1,7 @@
 import type { JobScheduler } from '@webext-core/job-scheduler'
 import { sessionStorage } from '@/lib/storage/sessions'
 import { taskStorage } from '@/lib/storage/tasks'
-import { gen } from '@/src/lib/utils'
+import { calcEarnings, gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
 import { MsgResponse } from '.'
@@ -14,7 +14,7 @@ class TaskStopError extends Data.TaggedError('TaskStopError')<{
 
 export type TaskStopAction = 'submit' | 'release'
 
-function program(action: TaskStopAction, jobs: JobScheduler) {
+function program(action: TaskStopAction, rate: number, jobs: JobScheduler) {
   return Effect.gen(function* (_) {
     const status = yield* _(Effect.tryPromise({
       try: async () => statusStorage.getValue(),
@@ -52,6 +52,7 @@ function program(action: TaskStopAction, jobs: JobScheduler) {
         draft.description = `${draft.tasks.length + 1} tasks`
         draft.tasks.push(currentTask)
         draft.duration = draft.tasks.reduce((acc, curr) => acc + curr.duration, 0)
+        draft.earnings = calcEarnings(draft.duration, rate)
       })
 
       yield* Effect.tryPromise({
@@ -103,6 +104,6 @@ function program(action: TaskStopAction, jobs: JobScheduler) {
   })
 }
 
-export async function handleTaskStop(action: TaskStopAction, jobs: JobScheduler) {
-  return gen(program(action, jobs))
+export async function handleTaskStop(action: TaskStopAction, rate: number, jobs: JobScheduler) {
+  return gen(program(action, rate, jobs))
 }
