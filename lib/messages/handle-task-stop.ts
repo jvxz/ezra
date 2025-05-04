@@ -54,6 +54,7 @@ function program(action: TaskStopAction, jobs: JobScheduler) {
         })),
         Effect.map(task =>
           create(currentSession, (draft) => {
+            draft.description = `${draft.tasks.length + 1} tasks`
             draft.tasks.push(task)
           })),
       )

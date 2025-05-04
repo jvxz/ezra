@@ -20,9 +20,7 @@ const program = Effect.gen(function* (_) {
     }),
   }))
 
-  if (!status.session) {
-    return new MsgResponse(false, 'Session not active')
-  }
+  if (!status.session) return new MsgResponse(false, 'Session not active')
 
   const currentSession = yield* _(Effect.tryPromise({
     try: async () => sessionStorage.getValue(),
@@ -31,12 +29,17 @@ const program = Effect.gen(function* (_) {
       message: 'Failed to get session storage',
     }),
   }), Effect.map((s) => {
+    if (!s) return null
+
+    s.description = `${s.tasks.length} tasks`
     s.end = Date.now()
     s.duration = s.end - s.start
     s.earnings = s.duration * 100
     s.efficiency = s.earnings / s.duration
     return s
   }))
+
+  if (!currentSession) return new MsgResponse(false, 'Could not get current session')
 
   yield* Effect.tryPromise({
     try: async () => db.sessions.add(currentSession),

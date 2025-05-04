@@ -35,6 +35,7 @@ function App() {
                   key={item.id}
                   data-id={item.id.toString()}
                   data-state={selectedItems.has(item.id.toString()) ? 'selected' : ''}
+                  data-active={item.end === 'Active' ? 'true' : 'false'}
                   className="group"
                 >
                   {/* <TableCell className="group-data-[state=selected]:italic">{item.id}</TableCell> */}
@@ -45,7 +46,7 @@ function App() {
                     value={formatTimestamp(item.start, 'time')}
                   />
                   <CopyableTableCell
-                    value={formatTimestamp(item.end, 'time')}
+                    value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')}
                   />
                   <CopyableTableCell
                     value={item.duration}
@@ -70,7 +71,7 @@ function CopyableTableCell({ value }: { value: string | number }) {
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <TableCell>{value}</TableCell>
+        <TableCell className='group-data-[active=true]:font-medium'>{value}</TableCell>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuLabel>{value}</ContextMenuLabel>

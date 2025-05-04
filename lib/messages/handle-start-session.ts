@@ -34,9 +34,9 @@ const program = Effect.gen(function* () {
 
   const draft: Session = {
     id: crypto.randomUUID(),
-    description: 'No tasks',
+    description: '0 tasks',
     start: Date.now(),
-    end: 0,
+    end: 'Active',
     duration: 0,
     earnings: 0,
     efficiency: 0,
