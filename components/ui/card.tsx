@@ -6,7 +6,7 @@ function Card({ className, ...props }: ComponentProps<'div'>) {
   return (
     <div
       data-slot="card"
-      className={cn(staticStyles.base, staticStyles.variant.default, 'flex flex-col gap-5', className)}
+      className={cn(staticStyles.base, staticStyles.variant.default, 'flex flex-col gap-4', className)}
       {...props}
     />
   )
