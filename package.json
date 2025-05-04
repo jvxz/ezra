@@ -44,7 +44,7 @@
     "dexie": "^4.0.11",
     "dexie-react-hooks": "^1.1.7",
     "effect": "^3.14.16",
-    "eslint": "^9.25.1",
+    "eslint": "^9.26.0",
     "eslint-plugin-react-hooks": "^6.0.0-rc.1",
     "eslint-plugin-react-refresh": "^0.4.20",
     "immer": "^10.1.1",
