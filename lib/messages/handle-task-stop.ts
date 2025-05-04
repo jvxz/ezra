@@ -48,16 +48,11 @@ function program(action: TaskStopAction, jobs: JobScheduler) {
     if (!currentSession) return new MsgResponse(false, 'Session not active')
 
     if (action === 'submit') {
-      const updatedSession = yield* _(
-        Effect.succeed(create(currentTask, (draft) => {
-          draft.duration = Date.now() - draft.start
-        })),
-        Effect.map(task =>
-          create(currentSession, (draft) => {
-            draft.description = `${draft.tasks.length + 1} tasks`
-            draft.tasks.push(task)
-          })),
-      )
+      const updatedSession = create(currentSession, (draft) => {
+        draft.description = `${draft.tasks.length + 1} tasks`
+        draft.tasks.push(currentTask)
+        draft.duration = draft.tasks.reduce((acc, curr) => acc + curr.duration, 0)
+      })
 
       yield* Effect.tryPromise({
         try: async () => sessionStorage.setValue(updatedSession),

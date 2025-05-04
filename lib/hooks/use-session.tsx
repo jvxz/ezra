@@ -3,12 +3,13 @@ import type { Session } from '../storage/sessions'
 import { sendMessage } from '@/lib/messages'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { sessionStorage } from '../storage/sessions'
+import { taskStorage } from '../storage/tasks'
 import { useStatusStore } from '../store/status'
 
 function useSession() {
   const qc = useQueryClient()
   const { setStatus } = useStatusStore()
-  const { data, isLoading } = useQuery({
+  const allSessions = useQuery({
     queryKey: ['sessions'],
     queryFn: async () => {
       const res = await sendMessage('getLiveData', 'sessions') as MsgResponse<Session[]>
@@ -25,10 +26,47 @@ function useSession() {
     },
   })
 
+  const currentSession = useQuery({
+    queryKey: ['current-session'],
+    queryFn: async () => {
+      const session = await sessionStorage.getValue()
+      if (!session) return null
+
+      const task = await taskStorage.getValue()
+      if (task) {
+        const duration = (session.tasks.reduce((acc, curr) => acc + curr.duration, 0) + task.duration)
+
+        return {
+          duration,
+        }
+      }
+
+      return {
+        duration: session.duration,
+      }
+    },
+  })
+
   useEffect(() => {
-    sessionStorage.watch(() => void qc.invalidateQueries({
-      queryKey: ['sessions'],
-    }))
+    const unsub = sessionStorage.watch(() => {
+      void qc.invalidateQueries({
+        queryKey: ['sessions'],
+      })
+      void qc.invalidateQueries({
+        queryKey: ['current-session'],
+      })
+    })
+
+    const unsubTask = taskStorage.watch(() => {
+      void qc.invalidateQueries({
+        queryKey: ['current-session'],
+      })
+    })
+
+    return () => {
+      unsub()
+      unsubTask()
+    }
   }, [])
 
   const { mutate: start } = useMutation({
@@ -72,8 +110,8 @@ function useSession() {
   })
 
   return {
-    data,
-    isLoading,
+    allSessions,
+    currentSession,
     start,
     stop,
   }

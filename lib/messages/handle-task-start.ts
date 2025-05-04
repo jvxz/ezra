@@ -45,6 +45,16 @@ function program(data: TaskStartData, jobs: JobScheduler) {
     })
 
     yield* Effect.tryPromise({
+      try: async () => browser.action.setBadgeText({
+        text: '0',
+      }),
+      catch: e => new TaskStartError({
+        cause: e,
+        message: 'Failed to set badge text',
+      }),
+    })
+
+    yield* Effect.tryPromise({
       try: async () => handleTaskTimer(jobs),
       catch: e => new TaskStartError({
         cause: e,
@@ -66,8 +76,6 @@ function program(data: TaskStartData, jobs: JobScheduler) {
   })
 }
 
-let currTime = 0
-
 // TODO: prevent constant storage updates
 async function handleTaskTimer(jobs: JobScheduler) {
   await jobs.scheduleJob({
@@ -75,15 +83,16 @@ async function handleTaskTimer(jobs: JobScheduler) {
     type: 'interval',
     duration: 1000,
     execute: async () => {
-      currTime += 1
-
-      void browser.action.setBadgeText({
-        text: `${currTime}`,
-      })
+      const task = await taskStorage.getValue()
+      if (!task) return
 
       await taskStorage.setValue(create(taskDraft, (draft) => {
-        draft.duration = currTime
+        draft.duration = task.duration + 1
       }))
+
+      await browser.action.setBadgeText({
+        text: `${task.duration + 1}`,
+      })
     },
 
   })

@@ -30,12 +30,7 @@ const program = Effect.gen(function* (_) {
     }),
   }), Effect.map((s) => {
     if (!s) return null
-
-    s.description = `${s.tasks.length} tasks`
     s.end = Date.now()
-    s.duration = s.end - s.start
-    s.earnings = s.duration * 100
-    s.efficiency = s.earnings / s.duration
     return s
   }))
 

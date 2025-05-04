@@ -6,9 +6,9 @@ import { formatTimestamp } from '@/src/lib/utils'
 import { Suspense } from 'react'
 
 function TableSessions() {
-  const { data: sessions } = useSession()
+  const { allSessions } = useSession()
   const selectedItems = useDragSelect()
-  const sortedSessions = useMemo(() => sessions?.sort((a, b) => b.start - a.start), [sessions])
+  const sortedSessions = useMemo(() => allSessions.data?.sort((a, b) => b.start - a.start), [allSessions.data])
 
   return (
     <div className="grow overflow-auto rounded border select-none">
