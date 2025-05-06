@@ -8,7 +8,7 @@ function DevTools() {
   const { _debugStart: startTask, _debugStop: stopTask } = useTask()
 
   return (
-    <div className="bg-card fixed top-12 right-1/2 left-1/2 z-50 flex w-fit -translate-x-1/2 gap-2 rounded border p-2">
+    <div className="bg-card fixed top-1/2 bottom-1/2 left-12 z-50 flex flex-col h-fit -translate-y-1/2 gap-2 rounded border p-2">
       <Button onClick={() => startSession()}>start session</Button>
       <Button onClick={() => stopSession()}>stop session</Button>
       <Button onClick={() => startTask()}>start task</Button>
