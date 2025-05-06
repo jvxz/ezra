@@ -37,8 +37,11 @@ function InfoCardTask() {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className='flex flex-row items-center justify-between'>
         <CardTitle>Task</CardTitle>
+        <p className='text-muted-foreground text-sm animate-in fade-in-0 duration-150 slide-in-from-right-50'>
+          {data.description}
+        </p>
       </CardHeader>
       <CardContent>
         <div className="space-y-2">
