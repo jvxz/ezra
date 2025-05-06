@@ -4,7 +4,7 @@ import { createTRPCProxyClient } from '@trpc/client'
 import { initTRPC } from '@trpc/server'
 import { ArkErrors } from 'arktype'
 import { chromeLink } from 'trpc-browser/link'
-import { handleGetLiveData } from './get-live-data'
+import { getCurrentSessionData } from './get-current-session-data'
 import { handleStartSession } from './handle-start-session'
 import { handleStopSession } from './handle-stop-session'
 import { handleTaskStart, taskStartValidator } from './handle-task-start'
@@ -18,7 +18,7 @@ const t = initTRPC.context<Context>().create({
 })
 
 export const appRouter = t.router({
-  getSessionData: t.procedure.query(async () => handleGetLiveData()),
+  getCurrentSessionData: t.procedure.query(async () => getCurrentSessionData()),
   startSession: t.procedure.query(async () => handleStartSession()),
   stopSession: t.procedure.query(async () => handleStopSession()),
   startTask: t.procedure.input(taskStartValidator).mutation(async ({ input, ctx }) => {

@@ -10,34 +10,21 @@ const trpc = createTrpc()
 function useSession() {
   const qc = useQueryClient()
   const { setStatus } = useStatusStore()
-  const { data, error } = useQuery({
-    queryKey: ['sessions'],
-    queryFn: async () => trpc.getSessionData.query(),
+  const { data, isLoading } = useQuery({
+    queryKey: ['session'],
+    queryFn: async () => trpc.getCurrentSessionData.query(),
   })
-
-  // useEffect(() => {
-  //   if (error) {
-  //     setStatus({
-  //       message: error.message,
-  //       timestamp: Date.now(),
-  //       type: 'error',
-  //     })
-  //   }
-  // }, [error])
 
   useEffect(() => {
     const unsub = sessionStorage.watch(() => {
       void qc.invalidateQueries({
-        queryKey: ['sessions'],
-      })
-      void qc.invalidateQueries({
-        queryKey: ['current-session'],
+        queryKey: ['session'],
       })
     })
 
     const unsubTask = taskStorage.watch(() => {
       void qc.invalidateQueries({
-        queryKey: ['current-session'],
+        queryKey: ['session'],
       })
     })
 
@@ -85,6 +72,7 @@ function useSession() {
 
   return {
     data,
+    isLoading,
     start,
     stop,
   }

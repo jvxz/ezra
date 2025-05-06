@@ -41,3 +41,9 @@ export function calcEarnings(durationInSeconds: number, rate: number) {
   const hrs = durationInSeconds / 3600
   return Number((hrs * rate).toFixed(2))
 }
+
+export function calcEfficiency(durationInSecs: number, aetInMins: number): number {
+  const aetInSecs = aetInMins * 60
+  const res = Number(((aetInSecs / durationInSecs) * 100).toFixed(2))
+  return res === Infinity ? 0 : res
+}

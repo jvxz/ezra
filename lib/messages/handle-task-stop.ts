@@ -1,7 +1,7 @@
 import type { JobScheduler } from '@webext-core/job-scheduler'
 import { sessionStorage } from '@/lib/storage/sessions'
 import { taskStorage } from '@/lib/storage/tasks'
-import { calcEarnings } from '@/src/lib/utils'
+import { calcEarnings, calcEfficiency } from '@/src/lib/utils'
 import { type } from 'arktype'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
@@ -30,13 +30,13 @@ function program(action: TaskStopParams['action'], rate: TaskStopParams['rate'],
     }))
 
     if (!status.task) {
-      return new TaskStopError({
+      throw new TaskStopError({
         message: 'Task not active',
       })
     }
 
     if (!status.session) {
-      return new TaskStopError({
+      throw new TaskStopError({
         message: 'Session not active',
       })
     }
@@ -50,7 +50,7 @@ function program(action: TaskStopParams['action'], rate: TaskStopParams['rate'],
     })
 
     if (!currentTask) {
-      return new TaskStopError({
+      throw new TaskStopError({
         message: 'Task not active',
       })
     }
@@ -64,7 +64,7 @@ function program(action: TaskStopParams['action'], rate: TaskStopParams['rate'],
     })
 
     if (!currentSession) {
-      return new TaskStopError({
+      throw new TaskStopError({
         message: 'Session not active',
       })
     }
@@ -75,6 +75,7 @@ function program(action: TaskStopParams['action'], rate: TaskStopParams['rate'],
         draft.tasks.push(currentTask)
         draft.duration = draft.tasks.reduce((acc, curr) => acc + curr.duration, 0)
         draft.earnings = calcEarnings(draft.duration, rate)
+        draft.efficiency = calcEfficiency(draft.duration, draft.tasks.reduce((a, c) => a + c.aet, 0))
       })
 
       yield* Effect.tryPromise({
