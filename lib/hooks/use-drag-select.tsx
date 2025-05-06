@@ -12,7 +12,7 @@ function useDragSelect() {
 
   useEffect(() => {
     const handleSelectToggle = (el: HTMLTableRowElement) => {
-      if (!el.dataset.id) return
+      if (!el.dataset.id || el.dataset.active === 'true') return
 
       if (selStateRef.current.mode === 'disable' && selItemsRef.current.has(el.dataset.id)) {
         selItemsRef.current.delete(el.dataset.id)
