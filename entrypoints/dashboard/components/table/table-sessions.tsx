@@ -16,16 +16,17 @@ function TableSessions() {
 
   return (
     <div className="grow overflow-auto rounded border select-none">
-      <div className='[&>div]:max-h-[800px]'>
+      <div className='[&>div]:h-[800px]'>
         <Table>
           <TableHeader className='sticky top-0 bg-accent/70 backdrop-blur-sm border-b'>
             <TableRow>
-              <TableHead>Description</TableHead>
-              <TableHead>Start</TableHead>
-              <TableHead>End</TableHead>
-              <TableHead>Duration</TableHead>
-              <TableHead>Earnings</TableHead>
-              <TableHead>Efficiency</TableHead>
+              <TableHead className='w-32'>Date</TableHead>
+              <TableHead className='w-48'>Description</TableHead>
+              <TableHead className='w-32'>Start</TableHead>
+              <TableHead className='w-32'>End</TableHead>
+              <TableHead className='w-42'>Duration</TableHead>
+              <TableHead className='w-32'>Efficiency</TableHead>
+              <TableHead className='w-auto'>Earnings</TableHead>
             </TableRow>
           </TableHeader>
           <Suspense>
@@ -38,12 +39,13 @@ function TableSessions() {
                   data-active={item.end === 'Active' ? 'true' : 'false'}
                   className="group"
                 >
+                  <CopyableTableCell value={formatTimestamp(item.start, 'date')} />
                   <CopyableTableCell value={item.description} />
                   <CopyableTableCell value={formatTimestamp(item.start, 'time')} />
                   <CopyableTableCell value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')} />
                   <CopyableTableCell value={item.duration} />
-                  <CopyableTableCell value={`$${item.earnings}`} />
                   <CopyableTableCell value={item.efficiency} />
+                  <CopyableTableCell value={`$${item.earnings}`} />
                 </TableRow>
               ))}
             </TableBody>
@@ -58,7 +60,7 @@ function CopyableTableCell({ value }: { value: string | number }) {
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <TableCell className="group-data-[active=true]:font-medium">{value}</TableCell>
+        <TableCell className="group-data-[active=true]:font-medium group-data-[active=true]:bg-accent">{value}</TableCell>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuLabel>{value}</ContextMenuLabel>
