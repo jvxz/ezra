@@ -1,13 +1,13 @@
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu'
-import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
-import { useSession } from '@/lib/hooks/use-current-session'
+import { formatTimestamp } from '@/src/lib/utils'
 import { Suspense } from 'react'
 
 function TableSessions() {
-  const { data, start, stop } = useSession()
+  const { data } = useAllSessions()
   const selectedItems = useDragSelect()
-  // const sortedSessions = useMemo(() => data?.sort((a, b) => b.start - a.start), [data])
 
   return (
     <div className="grow overflow-auto rounded border select-none">
@@ -23,8 +23,8 @@ function TableSessions() {
           </TableRow>
         </TableHeader>
         <Suspense>
-          {/* <TableBody>
-            {sortedSessions?.map(item => (
+          <TableBody>
+            {data?.map(item => (
               <TableRow
                 key={item.id}
                 data-id={item.id.toString()}
@@ -32,27 +32,15 @@ function TableSessions() {
                 data-active={item.end === 'Active' ? 'true' : 'false'}
                 className="group"
               >
-                <CopyableTableCell
-                  value={item.description}
-                />
-                <CopyableTableCell
-                  value={formatTimestamp(item.start, 'time')}
-                />
-                <CopyableTableCell
-                  value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')}
-                />
-                <CopyableTableCell
-                  value={item.duration}
-                />
-                <CopyableTableCell
-                  value={`$${item.earnings}`}
-                />
-                <CopyableTableCell
-                  value={item.efficiency}
-                />
+                <CopyableTableCell value={item.description} />
+                <CopyableTableCell value={formatTimestamp(item.start, 'time')} />
+                <CopyableTableCell value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')} />
+                <CopyableTableCell value={item.duration} />
+                <CopyableTableCell value={`$${item.earnings}`} />
+                <CopyableTableCell value={item.efficiency} />
               </TableRow>
             ))}
-          </TableBody> */}
+          </TableBody>
         </Suspense>
       </Table>
     </div>
