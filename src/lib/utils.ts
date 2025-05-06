@@ -32,8 +32,8 @@ export function formatDuration(durationInSeconds: number, unit: 'hrs' | 'mins' |
     case 'secs':
       dur = Duration.seconds(durationInSeconds)
       break
-  }
-
+    }
+    
   return Duration.format(dur)
 }
 
@@ -45,5 +45,5 @@ export function calcEarnings(durationInSeconds: number, rate: number) {
 export function calcEfficiency(durationInSecs: number, aetInMins: number): number {
   const aetInSecs = aetInMins * 60
   const res = Number(((aetInSecs / durationInSecs) * 100).toFixed(2))
-  return res === Infinity ? 0 : res
+  return res === Infinity ? 0 : res ?? 0
 }

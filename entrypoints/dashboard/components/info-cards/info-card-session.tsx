@@ -3,9 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCurrentSession } from '@/lib/hooks/use-current-session'
 import { useStatus } from '@/lib/hooks/use-status'
-import { calcEarnings } from '@/src/lib/utils'
-
-const rate = 15
+import { formatDuration } from '@/src/lib/utils'
 
 function InfoCardSession() {
   const { data } = useCurrentSession()
@@ -17,7 +15,7 @@ function InfoCardSession() {
           <CardTitle>Session</CardTitle>
           <ToggleSessionButton />
         </CardHeader>
-        <CardContent>
+        {/* <CardContent>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <h2 className="text-muted-foreground text-base font-medium">Elapsed time</h2>
@@ -45,10 +43,12 @@ function InfoCardSession() {
               </div>
             </div>
           </div>
-        </CardContent>
+        </CardContent> */}
       </Card>
     )
   }
+
+  console.log(data.efficiency)
 
   return (
     <Card>
@@ -61,13 +61,13 @@ function InfoCardSession() {
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Elapsed time</h2>
             <div className="text-xl font-medium">
-              {data.duration}
+              {formatDuration(data.duration, 'secs') === '0' ? '0s' : formatDuration(data.duration, 'secs')}
             </div>
           </div>
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Efficiency</h2>
             <div className="text-xl font-medium text-orange-400">
-              {data.efficiency}
+              {`${data.efficiency ?? 0}%`}
             </div>
           </div>
 
@@ -80,7 +80,11 @@ function InfoCardSession() {
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Total earnings</h2>
             <div className="text-xl font-medium">
-              {`$${calcEarnings(data.duration, rate)}`}
+              {Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+              }).format(data.earnings)}
             </div>
           </div>
         </div>

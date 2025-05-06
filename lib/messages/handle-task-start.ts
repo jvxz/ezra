@@ -1,7 +1,7 @@
 import type { Task } from '@/lib/storage/tasks'
 import type { JobScheduler } from '@webext-core/job-scheduler'
 import { taskStorage } from '@/lib/storage/tasks'
-import { calcEfficiency } from '@/src/lib/utils'
+import { calcEarnings, calcEfficiency } from '@/src/lib/utils'
 import { type } from 'arktype'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
@@ -105,6 +105,8 @@ async function handleTaskTimer(jobs: JobScheduler) {
       await taskStorage.setValue(create(task, (draft) => {
         draft.duration = draft.duration + 1
         draft.efficiency = calcEfficiency(draft.duration, draft.aet)
+        // TODO: get rate from settings
+        draft.earnings = calcEarnings(draft.duration, 15)
       }))
 
       await browser.action.setBadgeText({
