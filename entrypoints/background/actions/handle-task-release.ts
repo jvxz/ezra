@@ -3,15 +3,14 @@ import { usePrefs } from '@/lib/store/prefs'
 
 const trpc = createTrpc()
 
-export function handleTaskSubmit() {
+export function handleTaskRelease() {
   browser.webRequest.onBeforeRequest.addListener(
     (details) => {
-      if (details.method === 'POST' && /https:\/\/www.raterhub.com\/evaluation\/rater\/task\/commit/.exec(details.url)) {
-        const rate = usePrefs.getState().rate
-
+      if (details.method === 'POST' && /https:\/\/www.raterhub.com\/evaluation\/rater\/task\/release/.exec(details.url)) {
         void trpc.stopTask.mutate({
-          action: 'submit',
-          rate,
+          action: 'release',
+          // rate is not needed for task release
+          rate: 0,
         })
       }
     },
