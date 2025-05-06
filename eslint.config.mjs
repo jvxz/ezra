@@ -10,6 +10,7 @@ export default antfu({
       'ts/no-floating-promises': 'error',
       'ts/consistent-type-imports': 'error',
       'react/no-leaked-conditional-rendering': 'error',
+      'ts/no-unnecessary-condition': 'error',
     },
   },
 

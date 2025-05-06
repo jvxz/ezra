@@ -1,10 +1,10 @@
 import type { JobScheduler } from '@webext-core/job-scheduler'
 import { sessionStorage } from '@/lib/storage/sessions'
 import { taskStorage } from '@/lib/storage/tasks'
-import { gen } from '@/src/lib/utils'
+import { calcEarnings, calcEfficiency } from '@/src/lib/utils'
+import { type } from 'arktype'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
-import { MsgResponse } from '.'
 import { statusStorage } from '../storage/status'
 
 class TaskStopError extends Data.TaggedError('TaskStopError')<{
@@ -12,9 +12,14 @@ class TaskStopError extends Data.TaggedError('TaskStopError')<{
   message?: string
 }> {}
 
-export type TaskStopAction = 'submit' | 'release'
+export const taskStopValidator = type({
+  action: '\'submit\' | \'release\'',
+  rate: 'number',
+})
 
-function program(action: TaskStopAction, jobs: JobScheduler) {
+export type TaskStopParams = typeof taskStopValidator.t
+
+function program(action: TaskStopParams['action'], rate: TaskStopParams['rate'], jobs: JobScheduler) {
   return Effect.gen(function* (_) {
     const status = yield* _(Effect.tryPromise({
       try: async () => statusStorage.getValue(),
@@ -24,8 +29,17 @@ function program(action: TaskStopAction, jobs: JobScheduler) {
       }),
     }))
 
-    if (!status.task) return new MsgResponse(false, 'Task not active')
-    if (!status.session) return new MsgResponse(false, 'Session not active')
+    if (!status.task) {
+      throw new TaskStopError({
+        message: 'Task not active',
+      })
+    }
+
+    if (!status.session) {
+      throw new TaskStopError({
+        message: 'Session not active',
+      })
+    }
 
     const currentTask = yield* Effect.tryPromise({
       try: async () => taskStorage.getValue(),
@@ -35,7 +49,11 @@ function program(action: TaskStopAction, jobs: JobScheduler) {
       }),
     })
 
-    if (!currentTask) return new MsgResponse(false, 'Task not active')
+    if (!currentTask) {
+      throw new TaskStopError({
+        message: 'Task not active',
+      })
+    }
 
     const currentSession = yield* Effect.tryPromise({
       try: async () => sessionStorage.getValue(),
@@ -45,18 +63,20 @@ function program(action: TaskStopAction, jobs: JobScheduler) {
       }),
     })
 
-    if (!currentSession) return new MsgResponse(false, 'Session not active')
+    if (!currentSession) {
+      throw new TaskStopError({
+        message: 'Session not active',
+      })
+    }
 
     if (action === 'submit') {
-      const updatedSession = yield* _(
-        Effect.succeed(create(currentTask, (draft) => {
-          draft.duration = Date.now() - draft.start
-        })),
-        Effect.map(task =>
-          create(currentSession, (draft) => {
-            draft.tasks.push(task)
-          })),
-      )
+      const updatedSession = create(currentSession, (draft) => {
+        draft.description = `${draft.tasks.length + 1} tasks`
+        draft.tasks.push(currentTask)
+        draft.duration = draft.tasks.reduce((acc, curr) => acc + curr.duration, 0)
+        draft.earnings = calcEarnings(draft.duration, rate)
+        draft.efficiency = calcEfficiency(draft.duration, draft.tasks.reduce((a, c) => a + c.aet, 0))
+      })
 
       yield* Effect.tryPromise({
         try: async () => sessionStorage.setValue(updatedSession),
@@ -103,10 +123,10 @@ function program(action: TaskStopAction, jobs: JobScheduler) {
       }),
     })
 
-    return new MsgResponse(true, 'Task stopped')
+    return true
   })
 }
 
-export async function handleTaskStop(action: TaskStopAction, jobs: JobScheduler) {
-  return gen(program(action, jobs))
+export async function handleTaskStop(action: TaskStopParams['action'], rate: TaskStopParams['rate'], jobs: JobScheduler) {
+  return program(action, rate, jobs).pipe(Effect.runPromise)
 }

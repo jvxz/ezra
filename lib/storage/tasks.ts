@@ -1,3 +1,18 @@
+/**
+ * id - id from raterhub
+
+ * start - start timestamp from Date.now()
+
+ * duration - duration in seconds
+
+ * aet - aet in minutes
+
+ * efficiency - efficiency in minutes
+
+ * earnings - earnings in dollars
+
+ * tasks - submitted tasks during the session
+ */
 export interface Task {
   id: string
   description: string

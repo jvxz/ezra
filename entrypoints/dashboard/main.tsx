@@ -1,6 +1,8 @@
 import { DevTools } from '@/components/dev-tools.tsx'
 import { StatusToaster } from '@/components/status-toaster.tsx'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { createIDBPersister, queryClient } from '@/lib/query-client.ts'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { scan } from 'react-scan'
@@ -11,13 +13,18 @@ scan({
     enabled: process.env.NODE_ENV === 'development',
 })
 
-const queryClient = new QueryClient()
-
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider
+            client={queryClient}
+            persistOptions={{
+                persister: createIDBPersister(),
+                maxAge: 1000 * 60 * 60 * 24,
+            }}
+        >
             <App />
             {process.env.NODE_ENV === 'development' && <DevTools />}
             <StatusToaster />
-        </QueryClientProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+        </PersistQueryClientProvider>
     </React.StrictMode>,)
