@@ -6,9 +6,9 @@ import { formatTimestamp } from '@/src/lib/utils'
 import { Suspense } from 'react'
 
 function TableSessions() {
-  const { allSessions } = useSession()
+  const { data, start, stop } = useSession()
   const selectedItems = useDragSelect()
-  const sortedSessions = useMemo(() => allSessions.data?.sort((a, b) => b.start - a.start), [allSessions.data])
+  // const sortedSessions = useMemo(() => data?.sort((a, b) => b.start - a.start), [data])
 
   return (
     <div className="grow overflow-auto rounded border select-none">
@@ -24,7 +24,7 @@ function TableSessions() {
           </TableRow>
         </TableHeader>
         <Suspense>
-          <TableBody>
+          {/* <TableBody>
             {sortedSessions?.map(item => (
               <TableRow
                 key={item.id}
@@ -33,7 +33,6 @@ function TableSessions() {
                 data-active={item.end === 'Active' ? 'true' : 'false'}
                 className="group"
               >
-                {/* <TableCell className="group-data-[state=selected]:italic">{item.id}</TableCell> */}
                 <CopyableTableCell
                   value={item.description}
                 />
@@ -54,7 +53,7 @@ function TableSessions() {
                 />
               </TableRow>
             ))}
-          </TableBody>
+          </TableBody> */}
         </Suspense>
       </Table>
     </div>

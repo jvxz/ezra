@@ -1,7 +1,9 @@
-import { sendMessage } from '@/lib/messages'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { createTrpc } from '../messages/trpc'
 import { taskStorage } from '../storage/tasks'
 import { useStatusStore } from '../store/status'
+
+const trpc = createTrpc()
 
 function useTask() {
   const qc = useQueryClient()
@@ -22,7 +24,7 @@ function useTask() {
 
   const { mutate: _debugStart } = useMutation({
     mutationFn: async () => {
-      const res = await sendMessage('handleTaskStart', {
+      const res = await trpc.startTask.mutate({
         aet: 0.2,
         description: 'test',
         id: crypto.randomUUID(),
@@ -47,7 +49,10 @@ function useTask() {
   const { mutate: _debugStop } = useMutation({
     mutationFn: async () => {
       // TODO: get rate from user
-      const res = await sendMessage('handleTaskStop', 15)
+      const res = await trpc.stopTask.mutate({
+        action: 'submit',
+        rate: 15,
+      })
 
       if (!res.success) {
         return setStatus({

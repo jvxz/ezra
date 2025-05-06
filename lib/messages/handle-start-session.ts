@@ -1,9 +1,7 @@
 import type { Session } from '@/lib/storage/sessions'
 import { sessionStorage } from '@/lib/storage/sessions'
-import { gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
-import { MsgResponse } from '.'
 import { statusStorage } from '../storage/status'
 
 class StartSessionError extends Data.TaggedError('StartSessionError')<{
@@ -20,7 +18,11 @@ const program = Effect.gen(function* () {
     }),
   })
 
-  if (status.session) return new MsgResponse(false, 'Session already active')
+  if (status.session) {
+    throw new StartSessionError({
+      message: 'Session already active',
+    })
+  }
 
   yield* Effect.tryPromise({
     try: async () => statusStorage.setValue(create(status, (draft) => {
@@ -51,9 +53,9 @@ const program = Effect.gen(function* () {
     }),
   })
 
-  return new MsgResponse(true, 'Session started')
+  return draft
 })
 
 export async function handleStartSession() {
-  return gen(program)
+  return program.pipe(Effect.runPromise)
 }

@@ -1,8 +1,7 @@
 import type { ClassValue } from 'clsx'
-import { MsgResponse } from '@/lib/messages'
 import { clsx } from 'clsx'
 import * as dtz from 'date-fns-tz'
-import { Duration, Effect } from 'effect'
+import { Duration } from 'effect'
 import { twMerge } from 'tailwind-merge'
 
 const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
@@ -36,12 +35,6 @@ export function formatDuration(durationInSeconds: number, unit: 'hrs' | 'mins' |
   }
 
   return Duration.format(dur)
-}
-
-export async function gen<T, E extends { message?: string, cause?: unknown }>(program: Effect.Effect<T, E>) {
-  return program
-    .pipe(Effect.catchAll(e => Effect.succeed(new MsgResponse(false, `${e.message || 'Unknown error'}: ${String(e.cause || 'Unknown cause')}`))))
-    .pipe(Effect.runPromise)
 }
 
 export function calcEarnings(durationInSeconds: number, rate: number) {

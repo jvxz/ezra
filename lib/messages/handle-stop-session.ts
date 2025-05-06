@@ -1,9 +1,7 @@
 import { db } from '@/lib/db'
 import { sessionStorage } from '@/lib/storage/sessions'
-import { gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
-import { MsgResponse } from '.'
 import { statusStorage } from '../storage/status'
 
 class StopSessionError extends Data.TaggedError('StopSessionError')<{
@@ -20,7 +18,11 @@ const program = Effect.gen(function* (_) {
     }),
   }))
 
-  if (!status.session) return new MsgResponse(false, 'Session not active')
+  if (!status.session) {
+    throw new StopSessionError({
+      message: 'Session not active',
+    })
+  }
 
   const currentSession = yield* _(Effect.tryPromise({
     try: async () => sessionStorage.getValue(),
@@ -34,7 +36,11 @@ const program = Effect.gen(function* (_) {
     return s
   }))
 
-  if (!currentSession) return new MsgResponse(false, 'Could not get current session')
+  if (!currentSession) {
+    return new StopSessionError({
+      message: 'Could not get current session',
+    })
+  }
 
   yield* Effect.tryPromise({
     try: async () => db.sessions.add(currentSession),
@@ -62,9 +68,9 @@ const program = Effect.gen(function* (_) {
     }),
   })
 
-  return new MsgResponse(true, 'Session stopped')
+  return true
 })
 
 export async function handleStopSession() {
-  return gen(program)
+  return program.pipe(Effect.runPromise)
 }

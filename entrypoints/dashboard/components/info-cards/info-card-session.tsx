@@ -1,12 +1,53 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { useSession } from '@/lib/hooks/use-session'
 import { calcEarnings } from '@/src/lib/utils'
 
 const rate = 15
 
 function InfoCardSession() {
-  const { currentSession } = useSession()
+  const { data } = useSession()
+
+  if (!data) {
+    return (
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Session</CardTitle>
+          <ToggleSessionButton />
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <h2 className="text-muted-foreground text-base font-medium">Elapsed time</h2>
+              <div className="text-xl font-medium">
+                <Skeleton className="h-[20px] w-[100px]" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-muted-foreground text-base font-medium">Efficiency</h2>
+              <div className="text-xl font-medium text-orange-400">
+                <Skeleton className="h-[20px] w-[100px]" />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <h2 className="text-muted-foreground text-base font-medium">Total tasks</h2>
+              <div className="text-xl font-medium">
+                <Skeleton className="h-[20px] w-[100px]" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-muted-foreground text-base font-medium">Total earnings</h2>
+              <div className="text-xl font-medium">
+                <Skeleton className="h-[20px] w-[100px]" />
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+    )
+  }
 
   return (
     <Card>
@@ -19,22 +60,26 @@ function InfoCardSession() {
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Elapsed time</h2>
             <div className="text-xl font-medium">
-              {currentSession.data?.duration}
+              {data.duration}
             </div>
           </div>
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Efficiency</h2>
-            <div className="text-xl font-medium text-orange-400">97.3%</div>
+            <div className="text-xl font-medium text-orange-400">
+              {data.efficiency}
+            </div>
           </div>
 
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Total tasks</h2>
-            <div className="text-xl font-medium">6</div>
+            <div className="text-xl font-medium">
+              {data.taskCount}
+            </div>
           </div>
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Total earnings</h2>
             <div className="text-xl font-medium">
-              {`$${calcEarnings(currentSession.data?.duration ?? 0, rate)}`}
+              {`$${calcEarnings(data.duration, rate)}`}
             </div>
           </div>
         </div>
@@ -44,9 +89,9 @@ function InfoCardSession() {
 }
 
 function ToggleSessionButton() {
-  const { currentSession, start, stop } = useSession()
+  const { data, start, stop } = useSession()
 
-  if (currentSession.isLoading) {
+  if (!data) {
     return (
       <Button disabled>
         Start
@@ -56,7 +101,7 @@ function ToggleSessionButton() {
     )
   }
 
-  if (currentSession.data) {
+  if (data.isActive) {
     return (
       <Button onClick={() => stop()}>
         Stop

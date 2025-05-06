@@ -1,7 +1,5 @@
 import { sessionStorage } from '@/lib/storage/sessions'
-import { gen } from '@/src/lib/utils'
 import { Data, Effect } from 'effect'
-import { MsgResponse } from '.'
 import { db } from '../db'
 
 class GetLiveDataError extends Data.TaggedError('GetLiveDataError')<{
@@ -9,34 +7,48 @@ class GetLiveDataError extends Data.TaggedError('GetLiveDataError')<{
   message?: string
 }> {}
 
-function program(type: 'sessions' | 'tasks') {
-  return Effect.gen(function* (_) {
-    const idbSessions = yield* Effect.tryPromise({
-      try: async () => db.sessions.toArray(),
-      catch: e => new GetLiveDataError({
-        cause: JSON.stringify(e),
-        message: 'Failed to get sessions from db',
-      }),
-    })
+const program = Effect.gen(function* (_) {
+  const currentSession = yield* Effect.tryPromise({
+    try: async () => sessionStorage.getValue(),
+    catch: e => new GetLiveDataError({
+      cause: JSON.stringify(e),
+      message: 'Failed to get sessions from local storage',
+    }),
+  })
 
-    const lsSessions = yield* _(Effect.tryPromise({
-      try: async () => sessionStorage.getValue(),
-      catch: e => new GetLiveDataError({
-        cause: JSON.stringify(e),
-        message: 'Failed to get sessions from local storage',
-      }),
-    }))
+  const allSessions = yield* _(Effect.tryPromise({
+    try: async () => db.sessions.toArray(),
+    catch: e => new GetLiveDataError({
+      cause: JSON.stringify(e),
+      message: 'Failed to get sessions from db',
+    }),
+  }), Effect.map((s) => {
+    const dur = s.reduce((acc, curr) => acc + curr.duration, 0)
+    const eff = s.reduce((acc, curr) => acc + curr.efficiency, 0) / s.length
+    const earn = s.reduce((acc, curr) => acc + curr.earnings, 0)
 
-    if (type === 'sessions') {
-      return new MsgResponse(true, 'Live sessions fetched', lsSessions ? [...idbSessions, lsSessions] : idbSessions)
+    if (!currentSession) {
+      return {
+        duration: dur,
+        efficiency: eff,
+        earnings: earn,
+        taskCount: s.length,
+        isActive: false,
+      }
     }
 
-    return new MsgResponse(true, 'Live tasks fetched', {
-      tasks: lsSessions?.tasks ?? [],
-    })
-  })
-}
+    return {
+      duration: dur + currentSession.duration,
+      efficiency: eff + currentSession.efficiency,
+      earnings: earn + currentSession.earnings,
+      taskCount: s.length + currentSession.tasks.length,
+      isActive: true,
+    }
+  }))
 
-export async function handleGetLiveData(type: 'sessions' | 'tasks') {
-  return gen(program(type))
+  return allSessions
+})
+
+export async function handleGetLiveData() {
+  return program.pipe(Effect.runPromise)
 }

@@ -1,11 +1,9 @@
 import type { Task } from '@/lib/storage/tasks'
 import type { JobScheduler } from '@webext-core/job-scheduler'
-import type { TaskStartData } from '.'
 import { taskStorage } from '@/lib/storage/tasks'
-import { gen } from '@/src/lib/utils'
+import { type } from 'arktype'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
-import { MsgResponse } from '.'
 import { statusStorage } from '../storage/status'
 
 class TaskStartError extends Data.TaggedError('TaskStartError')<{
@@ -13,7 +11,15 @@ class TaskStartError extends Data.TaggedError('TaskStartError')<{
   message?: string
 }> {}
 
-function program(data: TaskStartData, jobs: JobScheduler) {
+export const taskStartValidator = type({
+  id: 'string',
+  description: 'string',
+  aet: 'number',
+})
+
+export type TaskStartParams = typeof taskStartValidator.t
+
+function program(data: TaskStartParams, jobs: JobScheduler) {
   return Effect.gen(function* () {
     const status = yield* Effect.tryPromise({
       try: async () => statusStorage.getValue(),
@@ -23,8 +29,17 @@ function program(data: TaskStartData, jobs: JobScheduler) {
       }),
     })
 
-    if (status.task) return new MsgResponse(false, 'Task already active')
-    if (!status.session) return new MsgResponse(false, 'Session not active')
+    if (status.task) {
+      return new TaskStartError({
+        message: 'Task already active',
+      })
+    }
+
+    if (!status.session) {
+      return new TaskStartError({
+        message: 'Session not active',
+      })
+    }
 
     const draft: Task = {
       id: data.id,
@@ -72,7 +87,7 @@ function program(data: TaskStartData, jobs: JobScheduler) {
       }),
     })
 
-    return new MsgResponse(true, 'Task started')
+    return draft
   })
 }
 
@@ -98,32 +113,6 @@ async function handleTaskTimer(jobs: JobScheduler) {
   })
 }
 
-// let currTime = 0
-
-// async function handleTaskTimer(jobs: JobScheduler) {
-//   await jobs.scheduleJob({
-//     id: 'task-timer',
-//     type: 'interval',
-//     duration: 1000,
-//     execute: async () => {
-//       currTime += 1
-
-//       void browser.action.setBadgeText({
-//         text: `${currTime}`,
-//       })
-
-//       if (!(currTime % 5)) {
-//         const currentTask = await taskStorage.getValue()
-
-//         await taskStorage.setValue(create(currentTask, (draft) => {
-//           draft.data.duration = currTime
-//         }))
-//       }
-//     },
-
-//   })
-// }
-
-export async function handleTaskStart(data: TaskStartData, jobs: JobScheduler) {
-  return gen(program(data, jobs))
+export async function handleTaskStart(data: TaskStartParams, jobs: JobScheduler) {
+  return program(data, jobs).pipe(Effect.runPromise)
 }
