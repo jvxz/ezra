@@ -7,7 +7,7 @@ import { useStatusStore } from '../store/status'
 
 const trpc = createTrpc()
 
-function useSession() {
+function useCurrentSession() {
   const qc = useQueryClient()
   const { setStatus } = useStatusStore()
   const { data, isLoading } = useQuery({
@@ -78,4 +78,4 @@ function useSession() {
   }
 }
 
-export { useSession }
+export { useCurrentSession }

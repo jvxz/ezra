@@ -1,14 +1,14 @@
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useSession } from '@/lib/hooks/use-session'
+import { useCurrentSession } from '@/lib/hooks/use-current-session'
 import { useStatus } from '@/lib/hooks/use-status'
 import { calcEarnings } from '@/src/lib/utils'
 
 const rate = 15
 
 function InfoCardSession() {
-  const { data } = useSession()
+  const { data } = useCurrentSession()
 
   if (!data) {
     return (
@@ -90,7 +90,7 @@ function InfoCardSession() {
 }
 
 function ToggleSessionButton() {
-  const { start, stop } = useSession()
+  const { start, stop } = useCurrentSession()
   const { data } = useStatus()
 
   if (!data) {

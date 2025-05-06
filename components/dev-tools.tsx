@@ -1,4 +1,4 @@
-import { useSession } from '@/lib/hooks/use-session'
+import { useSession } from '@/lib/hooks/use-current-session'
 import { useTask } from '@/lib/hooks/use-task'
 import { ThemeToggle } from './theme-toggle'
 import { Button } from './ui/button'

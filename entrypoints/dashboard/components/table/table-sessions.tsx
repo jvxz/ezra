@@ -1,8 +1,7 @@
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { Table, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
-import { useSession } from '@/lib/hooks/use-session'
-import { formatTimestamp } from '@/src/lib/utils'
+import { useSession } from '@/lib/hooks/use-current-session'
 import { Suspense } from 'react'
 
 function TableSessions() {
