@@ -3,46 +3,53 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
 import { formatTimestamp } from '@/src/lib/utils'
-import { Suspense } from 'react'
+import { Suspense, useMemo } from 'react'
 
 function TableSessions() {
   const { data } = useAllSessions()
   const selectedItems = useDragSelect()
+  const sortedItems = useMemo(() => {
+    return data?.sort((a, b) => {
+      return b.start - a.start
+    })
+  }, [data])
 
   return (
     <div className="grow overflow-auto rounded border select-none">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Description</TableHead>
-            <TableHead>Start</TableHead>
-            <TableHead>End</TableHead>
-            <TableHead>Duration</TableHead>
-            <TableHead>Earnings</TableHead>
-            <TableHead>Efficiency</TableHead>
-          </TableRow>
-        </TableHeader>
-        <Suspense>
-          <TableBody>
-            {data?.map(item => (
-              <TableRow
-                key={item.id}
-                data-id={item.id.toString()}
-                data-state={selectedItems.has(item.id.toString()) ? 'selected' : ''}
-                data-active={item.end === 'Active' ? 'true' : 'false'}
-                className="group"
-              >
-                <CopyableTableCell value={item.description} />
-                <CopyableTableCell value={formatTimestamp(item.start, 'time')} />
-                <CopyableTableCell value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')} />
-                <CopyableTableCell value={item.duration} />
-                <CopyableTableCell value={`$${item.earnings}`} />
-                <CopyableTableCell value={item.efficiency} />
-              </TableRow>
-            ))}
-          </TableBody>
-        </Suspense>
-      </Table>
+      <div className='[&>div]:max-h-[800px]'>
+        <Table>
+          <TableHeader className='sticky top-0 bg-accent/70 backdrop-blur-sm border-b'>
+            <TableRow>
+              <TableHead>Description</TableHead>
+              <TableHead>Start</TableHead>
+              <TableHead>End</TableHead>
+              <TableHead>Duration</TableHead>
+              <TableHead>Earnings</TableHead>
+              <TableHead>Efficiency</TableHead>
+            </TableRow>
+          </TableHeader>
+          <Suspense>
+            <TableBody>
+              {sortedItems?.map(item => (
+                <TableRow
+                  key={item.id}
+                  data-id={item.id.toString()}
+                  data-state={selectedItems.has(item.id.toString()) ? 'selected' : ''}
+                  data-active={item.end === 'Active' ? 'true' : 'false'}
+                  className="group"
+                >
+                  <CopyableTableCell value={item.description} />
+                  <CopyableTableCell value={formatTimestamp(item.start, 'time')} />
+                  <CopyableTableCell value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')} />
+                  <CopyableTableCell value={item.duration} />
+                  <CopyableTableCell value={`$${item.earnings}`} />
+                  <CopyableTableCell value={item.efficiency} />
+                </TableRow>
+              ))}
+            </TableBody>
+          </Suspense>
+        </Table>
+      </div>
     </div>
   )
 }
