@@ -1,7 +1,7 @@
 import { DevTools } from '@/components/dev-tools.tsx'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { StatusToaster } from '@/components/status-toaster.tsx'
 import { createIDBPersister, queryClient } from '@/lib/query-client.ts'
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
@@ -27,5 +27,4 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <StatusToaster />
             <ReactQueryDevtools initialIsOpen={false} />
         </PersistQueryClientProvider>
-    </React.StrictMode>
-)
+    </React.StrictMode>,)
