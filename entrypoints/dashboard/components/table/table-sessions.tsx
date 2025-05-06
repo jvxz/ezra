@@ -4,6 +4,7 @@ import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
 import { formatTimestamp } from '@/src/lib/utils'
 import { Suspense, useMemo } from 'react'
+import { TableSessionsFooter } from './table-sessions-footer'
 
 function TableSessions() {
   const { data } = useAllSessions()
@@ -16,17 +17,17 @@ function TableSessions() {
 
   return (
     <div className="grow overflow-auto rounded border select-none">
-      <div className='[&>div]:h-[800px]'>
+      <div className="[&>div]:h-[800px]">
         <Table>
-          <TableHeader className='sticky top-0 bg-accent/70 backdrop-blur-sm border-b'>
+          <TableHeader className="bg-accent/70 sticky top-0 border-b backdrop-blur-sm">
             <TableRow>
-              <TableHead className='w-32'>Date</TableHead>
-              <TableHead className='w-48'>Description</TableHead>
-              <TableHead className='w-32'>Start</TableHead>
-              <TableHead className='w-32'>End</TableHead>
-              <TableHead className='w-42'>Duration</TableHead>
-              <TableHead className='w-32'>Efficiency</TableHead>
-              <TableHead className='w-auto'>Earnings</TableHead>
+              <TableHead className="w-32">Date</TableHead>
+              <TableHead className="w-48">Description</TableHead>
+              <TableHead className="w-32">Start</TableHead>
+              <TableHead className="w-32">End</TableHead>
+              <TableHead className="w-42">Duration</TableHead>
+              <TableHead className="w-32">Efficiency</TableHead>
+              <TableHead className="w-auto">Earnings</TableHead>
             </TableRow>
           </TableHeader>
           <Suspense>
@@ -52,6 +53,7 @@ function TableSessions() {
           </Suspense>
         </Table>
       </div>
+      <TableSessionsFooter selectedItems={selectedItems} />
     </div>
   )
 }
@@ -60,7 +62,7 @@ function CopyableTableCell({ value }: { value: string | number }) {
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <TableCell className="group-data-[active=true]:font-medium group-data-[active=true]:bg-accent">{value}</TableCell>
+        <TableCell className="group-data-[active=true]:bg-accent group-data-[active=true]:font-medium">{value}</TableCell>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuLabel>{value}</ContextMenuLabel>
