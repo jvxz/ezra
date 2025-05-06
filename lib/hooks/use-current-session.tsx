@@ -1,5 +1,4 @@
 import { createTrpc } from '@/lib/messages/trpc'
-// import { sendMessage } from '@/lib/messages/trpc'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { sessionStorage } from '../storage/sessions'
 import { taskStorage } from '../storage/tasks'
@@ -37,6 +36,11 @@ function useCurrentSession() {
   const { mutate: start } = useMutation({
     mutationFn: async () => trpc.startSession.query(),
     onError: (error) => {
+
+      qc.setQueryData(['session'], () => {
+        return null
+      })
+
       setStatus({
         message: error.message,
         timestamp: Date.now(),
@@ -48,6 +52,17 @@ function useCurrentSession() {
         message: 'Session started',
         timestamp: Date.now(),
         type: 'success',
+      })
+    },
+    onMutate: () => {
+      qc.setQueryData(['session'], () => {
+        return {
+          earnings: 0,
+          taskCount: 0,
+          duration: 0,
+          efficiency: 0,
+          isActive: true,
+        }
       })
     },
   })
@@ -66,6 +81,11 @@ function useCurrentSession() {
         message: 'Session stopped',
         timestamp: Date.now(),
         type: 'success',
+      })
+    },
+    onMutate: () => {
+      qc.setQueryData(['session'], () => {
+        return null
       })
     },
   })
