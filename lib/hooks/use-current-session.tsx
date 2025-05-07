@@ -9,7 +9,7 @@ const trpc = createTrpc()
 function useCurrentSession() {
   const qc = useQueryClient()
   const { setStatus } = useStatusStore()
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ['session'],
     queryFn: async () => trpc.getCurrentSessionData.query(),
   })
@@ -36,7 +36,6 @@ function useCurrentSession() {
   const { mutate: start } = useMutation({
     mutationFn: async () => trpc.startSession.query(),
     onError: (error) => {
-
       qc.setQueryData(['session'], () => {
         return null
       })
@@ -75,6 +74,8 @@ function useCurrentSession() {
         timestamp: Date.now(),
         type: 'error',
       })
+
+      void refetch()
     },
     onSuccess: () => {
       setStatus({
