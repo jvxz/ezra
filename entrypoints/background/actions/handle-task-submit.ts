@@ -1,5 +1,5 @@
 import { handleTaskStop } from '@/lib/messages/handle-task-stop'
-import { usePrefs } from '@/lib/store/prefs'
+import { usePrefsStore } from '@/lib/store/prefs'
 
 const RGX = /https:\/\/www.raterhub.com\/evaluation\/rater\/task\/commit/
 
@@ -21,7 +21,7 @@ export function handleTaskSubmit() {
   browser.webRequest.onBeforeRequest.addListener(
     (details) => {
       if (details.method === 'POST' && RGX.exec(details.url)) {
-        const rate = usePrefs.getState().rate
+        const rate = usePrefsStore.getState().rate
 
         void handleTaskStop('submit', rate)
       }

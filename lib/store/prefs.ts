@@ -13,7 +13,7 @@ const initialState: State = {
   rate: 15,
 }
 
-export const usePrefs = create<State & Actions>()(persist(
+export const usePrefsStore = create<State & Actions>()(persist(
   set => ({
     ...initialState,
     setRate: (rate) => {
