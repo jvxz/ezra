@@ -1,6 +1,8 @@
 /**
  * id - id from raterhub
 
+ * description - description from raterhub
+
  * start - start timestamp from Date.now()
 
  * duration - duration in seconds

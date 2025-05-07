@@ -25,23 +25,20 @@ export const appRouter = t.router({
   stopSession: t.procedure.query(async () => handleStopSession()),
   startTask: t.procedure.input(taskStartValidator).mutation(async ({ input, ctx }) => {
     if (input instanceof ArkErrors) {
-      return {
-        success: false,
-        message: input.summary,
-      }
+      throw new TypeError(input.summary)
     }
 
     return handleTaskStart(input, ctx.jobs)
   }),
-  stopTask: t.procedure.input(taskStopValidator).mutation(async ({ input, ctx }) => {
+  stopTask: t.procedure.input(taskStopValidator).mutation(async ({ input }) => {
     if (input instanceof ArkErrors) {
-      return {
-        success: false,
-        message: input.summary,
-      }
+      throw new TypeError(input.summary)
     }
 
-    return handleTaskStop(input.action, input.rate, ctx.jobs)
+    return handleTaskStop(input.action, input.rate)
+  }),
+  test: t.procedure.query(async () => {
+    return 'attempting to connect...'
   }),
 })
 

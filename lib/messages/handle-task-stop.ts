@@ -1,7 +1,7 @@
-import type { JobScheduler } from '@webext-core/job-scheduler'
 import { sessionStorage } from '@/lib/storage/sessions'
 import { taskStorage } from '@/lib/storage/tasks'
 import { calcEarnings, calcEfficiency } from '@/src/lib/utils'
+import { defineJobScheduler } from '@webext-core/job-scheduler'
 import { type } from 'arktype'
 import { Data, Effect } from 'effect'
 import { create } from 'mutative'
@@ -19,8 +19,10 @@ export const taskStopValidator = type({
 
 export type TaskStopParams = typeof taskStopValidator.t
 
-function program(action: TaskStopParams['action'], rate: TaskStopParams['rate'], jobs: JobScheduler) {
+function program(action: TaskStopParams['action'], rate: TaskStopParams['rate']) {
   return Effect.gen(function* (_) {
+    const jobs = defineJobScheduler()
+
     const status = yield* _(Effect.tryPromise({
       try: async () => statusStorage.getValue(),
       catch: e => new TaskStopError({
@@ -127,6 +129,6 @@ function program(action: TaskStopParams['action'], rate: TaskStopParams['rate'],
   })
 }
 
-export async function handleTaskStop(action: TaskStopParams['action'], rate: TaskStopParams['rate'], jobs: JobScheduler) {
-  return program(action, rate, jobs).pipe(Effect.runPromise)
+export async function handleTaskStop(action: TaskStopParams['action'], rate: TaskStopParams['rate']) {
+  return program(action, rate).pipe(Effect.runPromise)
 }

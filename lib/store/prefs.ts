@@ -10,7 +10,7 @@ interface Actions {
 }
 
 const initialState: State = {
-  rate: 0,
+  rate: 15,
 }
 
 export const usePrefs = create<State & Actions>()(persist(

@@ -23,8 +23,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             }}
         >
             <App />
-            {process.env.NODE_ENV === 'development' && <DevTools />}
+            {/* {process.env.NODE_ENV === 'development' && <DevTools />} */}
+            <DevTools />
             <StatusToaster />
             <ReactQueryDevtools initialIsOpen={false} />
         </PersistQueryClientProvider>
-    </React.StrictMode>,)
+    </React.StrictMode>
+)

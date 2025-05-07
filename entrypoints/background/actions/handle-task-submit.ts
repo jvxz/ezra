@@ -1,18 +1,29 @@
-import { createTrpc } from '@/lib/messages/trpc'
+import { handleTaskStop } from '@/lib/messages/handle-task-stop'
 import { usePrefs } from '@/lib/store/prefs'
 
-const trpc = createTrpc()
+const RGX = /https:\/\/www.raterhub.com\/evaluation\/rater\/task\/commit/
 
 export function handleTaskSubmit() {
+  // browser.webRequest.onBeforeRequest.addListener(
+  //   (details) => {
+  //     if (details.method === 'GET' && details.url.includes('example')) {
+  //       const rate = usePrefs.getState().rate
+  //       console.log('rate', rate);
+
+  //       void handleTaskStop('submit', rate)
+  //     }
+  //   },
+  //   {
+  //     urls: ['*://example.com/*'],
+  //   },
+  //   // ['requestBody'],
+  // )
   browser.webRequest.onBeforeRequest.addListener(
     (details) => {
-      if (details.method === 'POST' && /https:\/\/www.raterhub.com\/evaluation\/rater\/task\/commit/.exec(details.url)) {
+      if (details.method === 'POST' && RGX.exec(details.url)) {
         const rate = usePrefs.getState().rate
 
-        void trpc.stopTask.mutate({
-          action: 'submit',
-          rate,
-        })
+        void handleTaskStop('submit', rate)
       }
     },
     {

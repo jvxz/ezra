@@ -46,7 +46,7 @@ function program(data: TaskStartParams, jobs: JobScheduler) {
       id: data.id,
       description: data.description,
       start: Date.now(),
-      duration: 0,
+      duration: 1,
       efficiency: 0,
       earnings: 0,
       aet: data.aet,

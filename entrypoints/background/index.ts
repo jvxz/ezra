@@ -22,6 +22,13 @@ export default defineBackground({
       router: appRouter,
       createContext,
       onError: ({ error }) => {
+        browser.notifications.create({
+          type: 'basic',
+          iconUrl: 'icon.png',
+          title: 'Error',
+          message: error.message,
+        })
+
         useStatusStore.getState().setStatus({
           message: error.message,
           timestamp: Date.now(),
