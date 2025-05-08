@@ -1,18 +1,11 @@
-import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
+import { TopButtons } from './components/top-buttons'
 
 function App() {
-  const handleClick = () => {
-    const url = browser.runtime.getURL('/dashboard.html')
-    void browser.tabs.create({
-      url,
-    })
-  }
-
   return (
-    <div className="p-4">
-      <Button onClick={handleClick}>
-        Dashboard
-      </Button>
+    <div className="flex h-[400px] w-68 flex-col gap-2 p-4">
+      <TopButtons />
+      <Separator />
     </div>
   )
 }
