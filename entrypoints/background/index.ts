@@ -2,6 +2,7 @@ import { appRouter } from '@/lib/messages/trpc'
 import { useStatusStore } from '@/lib/store/status'
 import { defineJobScheduler } from '@webext-core/job-scheduler'
 import { createChromeHandler } from 'trpc-browser/adapter'
+import { handleBrowserStartup } from './actions/handle-browser-startup'
 import { handleTaskRelease } from './actions/handle-task-release'
 import { handleTaskSubmit } from './actions/handle-task-submit'
 
@@ -15,6 +16,8 @@ export type Context = ReturnType<typeof createContext>
 
 export default defineBackground({
   main: () => {
+    void handleBrowserStartup()
+
     void handleTaskSubmit()
     void handleTaskRelease()
 
