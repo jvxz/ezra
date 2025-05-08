@@ -1,7 +1,7 @@
 import type { VariantProps } from 'class-variance-authority'
 import type { ComponentProps } from 'react'
 import { interactiveStyles } from '@/lib/styles'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import { Slot } from '@radix-ui/react-slot'
 import { cva } from 'class-variance-authority'
 import { Spinner } from './spinner'

@@ -1,6 +1,6 @@
 import { sessionStorage } from '@/lib/storage/sessions'
 import { taskStorage } from '@/lib/storage/tasks'
-import { calcEfficiency } from '@/src/lib/utils'
+import { calcEfficiency } from '@/lib/utils'
 import { Data, Effect } from 'effect'
 
 class GetLiveDataError extends Data.TaggedError('GetLiveDataError')<{

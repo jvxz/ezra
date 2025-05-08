@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 import { staticStyles } from '@/lib/styles'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 
 function Card({ className, ...props }: ComponentProps<'div'>) {
   return (

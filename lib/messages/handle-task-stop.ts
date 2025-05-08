@@ -1,6 +1,6 @@
 import { sessionStorage } from '@/lib/storage/sessions'
 import { taskStorage } from '@/lib/storage/tasks'
-import { calcEarnings, calcEfficiency } from '@/src/lib/utils'
+import { calcEarnings, calcEfficiency } from '@/lib/utils'
 import { defineJobScheduler } from '@webext-core/job-scheduler'
 import { type } from 'arktype'
 import { Data, Effect } from 'effect'
