@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { useCurrentSession } from '@/lib/hooks/use-current-session'
 import { useStatus } from '@/lib/hooks/use-status'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 
 function TopButtons() {
   return (

@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentSession } from '@/lib/hooks/use-current-session'
-import { formatDuration } from '@/src/lib/utils'
+import { formatDuration } from '@/lib/utils'
 
 function TimeInfo() {
   return (

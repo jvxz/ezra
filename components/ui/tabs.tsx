@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 import { interactiveStyles, staticStyles } from '@/lib/styles'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import * as TabsPrimitive from '@radix-ui/react-tabs'
 
 function Tabs({
