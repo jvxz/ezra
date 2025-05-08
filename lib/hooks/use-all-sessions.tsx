@@ -29,7 +29,7 @@ function useAllSessions() {
       unsub()
       unsubTask()
     }
-  }, [])
+  })
 
   return {
     data: sessions,

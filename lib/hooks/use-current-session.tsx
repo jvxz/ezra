@@ -31,7 +31,7 @@ function useCurrentSession() {
       unsub()
       unsubTask()
     }
-  }, [])
+  })
 
   const { mutate: start } = useMutation({
     mutationFn: async () => trpc.startSession.query(),

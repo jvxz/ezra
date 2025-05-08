@@ -35,7 +35,7 @@ function InfoCardSession() {
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Efficiency</h2>
             <div className="text-xl font-medium text-orange-400">
-              {`${data.efficiency ?? 0}%`}
+              {`${data.efficiency}%`}
             </div>
           </div>
 

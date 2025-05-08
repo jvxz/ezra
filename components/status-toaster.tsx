@@ -3,7 +3,7 @@ import { toast } from 'sonner'
 import { Toaster } from './ui/sonner'
 
 function StatusToaster() {
-  const { message, timestamp, type } = useStatusStore()
+  const { message, type } = useStatusStore()
 
   useEffect(() => {
     if (!message) return
@@ -19,7 +19,7 @@ function StatusToaster() {
         toast.info(message)
         break
     }
-  }, [timestamp])
+  })
 
   return (
     <Toaster />
