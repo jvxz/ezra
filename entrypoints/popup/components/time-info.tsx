@@ -1,4 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useCurrentSession } from '@/lib/hooks/use-current-session'
+import { formatDuration } from '@/src/lib/utils'
 
 function TimeInfo() {
   return (
@@ -12,32 +14,47 @@ function TimeInfo() {
           <TabsTrigger value="day">Day</TabsTrigger>
           <TabsTrigger value="week">Week</TabsTrigger>
         </TabsList>
-        <TabsContent value="session">
-          <div className="my-2 flex items-center justify-around text-2xl font-medium">
-            <span>10:00</span>
-            <span className="text-orange-400">98.7%</span>
-          </div>
-        </TabsContent>
-        <TabsContent value="day">
-          <div className="my-2 flex items-center justify-around text-2xl font-medium">
-            <span>10:00</span>
-            <span className="text-orange-400">98.7%</span>
-          </div>
-        </TabsContent>
-        <TabsContent value="week">
-          <div className="my-2 flex items-center justify-around text-2xl font-medium">
-            <span>10:00</span>
-            <span className="text-orange-400">98.7%</span>
-          </div>
-        </TabsContent>
-        <TabsContent value="month">
-          <div className="my-2 flex items-center justify-around text-2xl font-medium">
-            <span>10:00</span>
-            <span className="text-orange-400">98.7%</span>
-          </div>
-        </TabsContent>
+        <TabsContentTime value="session" />
+        <TabsContentTime value="day" />
+        <TabsContentTime value="week" />
+        <TabsContentTime value="month" />
       </Tabs>
     </div>
+  )
+}
+
+// TODO: Add a loading state
+function TabsContentTime({ value }: { value: 'session' | 'day' | 'week' | 'month' }) {
+  const { data: session, isLoading } = useCurrentSession()
+
+  if (isLoading) {
+    return (
+      <TabsContent value={value}>
+        <div className="my-2 flex items-center justify-around text-2xl font-medium">
+          <span>--</span>
+          <span>--</span>
+        </div>
+      </TabsContent>
+    )
+  }
+
+  if (!session) {
+    return (
+      <TabsContent value={value}>
+        <div className="my-2 flex items-center justify-around text-lg">
+          <span>No session active</span>
+        </div>
+      </TabsContent>
+    )
+  }
+
+  return (
+    <TabsContent value={value}>
+      <div className="my-2 flex items-center justify-around text-2xl font-medium">
+        <span>{formatDuration(session.duration, 'secs')}</span>
+        <span className="text-orange-400">{session.efficiency}</span>
+      </div>
+    </TabsContent>
   )
 }
 
