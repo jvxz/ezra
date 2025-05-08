@@ -2,7 +2,7 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, Con
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
-import { formatTimestamp } from '@/src/lib/utils'
+import { formatTimestamp } from '@/lib/utils'
 import { Suspense, useMemo } from 'react'
 import { TableSessionsFooter } from './table-sessions-footer'
 

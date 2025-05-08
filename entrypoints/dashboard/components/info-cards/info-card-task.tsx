@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { useTask } from '@/lib/hooks/use-task'
-import { formatDuration } from '@/src/lib/utils'
+import { formatDuration } from '@/lib/utils'
 
 function InfoCardTask() {
   const { data } = useTask()

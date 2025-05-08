@@ -1,7 +1,7 @@
 import type { Task } from '@/lib/storage/tasks'
 import type { JobScheduler } from '@webext-core/job-scheduler'
 import { taskStorage } from '@/lib/storage/tasks'
-import { calcEarnings, calcEfficiency } from '@/src/lib/utils'
+import { calcEarnings, calcEfficiency } from '@/lib/utils'
 import { type } from 'arktype'
 import { Data, Duration, Effect } from 'effect'
 import { create } from 'mutative'

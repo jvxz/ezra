@@ -2,7 +2,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useCurrentSession } from '@/lib/hooks/use-current-session'
 import { useStatus } from '@/lib/hooks/use-status'
-import { formatDuration } from '@/src/lib/utils'
+import { formatDuration } from '@/lib/utils'
 
 function InfoCardSession() {
   const { data } = useCurrentSession()

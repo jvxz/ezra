@@ -1,7 +1,7 @@
 import type { ComponentProps } from 'react'
 import { buttonVariants } from '@/components/ui/button'
 import { overlayStyles, staticStyles } from '@/lib/styles'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import * as AlertDialogPrimitive from '@radix-ui/react-alert-dialog'
 
 function AlertDialog({ ...props }: ComponentProps<typeof AlertDialogPrimitive.Root>) {

@@ -1,6 +1,6 @@
 import type { ComponentProps } from 'react'
 import { popoverStyles } from '@/lib/styles'
-import { cn } from '@/src/lib/utils'
+import { cn } from '@/lib/utils'
 import * as ContextMenuPrimitive from '@radix-ui/react-context-menu'
 
 function ContextMenu({ ...props }: ComponentProps<typeof ContextMenuPrimitive.Root>) {
