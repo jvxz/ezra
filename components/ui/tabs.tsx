@@ -26,7 +26,7 @@ function TabsList({
       className={cn(
         staticStyles.base,
         staticStyles.variant.default,
-        'relative inline-flex w-fit items-center justify-center gap-4 border-0 p-0 px-2',
+        'relative inline-flex w-fit items-center justify-center gap-4 border-0 bg-transparent p-0 px-2',
         className,
       )}
       {...props}
