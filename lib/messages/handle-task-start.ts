@@ -3,7 +3,7 @@ import type { JobScheduler } from '@webext-core/job-scheduler'
 import { taskStorage } from '@/lib/storage/tasks'
 import { calcEarnings, calcEfficiency } from '@/src/lib/utils'
 import { type } from 'arktype'
-import { Data, Effect } from 'effect'
+import { Data, Duration, Effect } from 'effect'
 import { create } from 'mutative'
 import { statusStorage } from '../storage/status'
 
@@ -46,7 +46,7 @@ function program(data: TaskStartParams, jobs: JobScheduler) {
       id: data.id,
       description: data.description,
       start: Date.now(),
-      duration: 1,
+      duration: 0,
       efficiency: 0,
       earnings: 0,
       aet: data.aet,
@@ -62,7 +62,7 @@ function program(data: TaskStartParams, jobs: JobScheduler) {
 
     yield* Effect.tryPromise({
       try: async () => browser.action.setBadgeText({
-        text: '0',
+        text: getRemainingTime(draft.duration, draft.aet),
       }),
       catch: e => new TaskStartError({
         cause: e,
@@ -88,6 +88,22 @@ function program(data: TaskStartParams, jobs: JobScheduler) {
       }),
     })
 
+    yield* Effect.tryPromise({
+      try: async () => {
+        await browser.action.setBadgeBackgroundColor({
+          color: '#000000',
+        })
+
+        await browser.action.setBadgeTextColor({
+          color: '#fff',
+        })
+      },
+      catch: e => new TaskStartError({
+        cause: e,
+        message: 'Failed to set badge background color',
+      }),
+    })
+
     return draft
   })
 }
@@ -105,12 +121,11 @@ async function handleTaskTimer(jobs: JobScheduler) {
       await taskStorage.setValue(create(task, (draft) => {
         draft.duration = draft.duration + 1
         draft.efficiency = calcEfficiency(draft.duration, draft.aet)
-        // TODO: get rate from settings
         draft.earnings = calcEarnings(draft.duration, 15)
       }))
 
       await browser.action.setBadgeText({
-        text: `${task.duration + 1}`,
+        text: `${getRemainingTime(task.duration + 1, task.aet)}`,
       })
     },
 
@@ -119,4 +134,20 @@ async function handleTaskTimer(jobs: JobScheduler) {
 
 export async function handleTaskStart(data: TaskStartParams, jobs: JobScheduler) {
   return program(data, jobs).pipe(Effect.runPromise)
+}
+
+function getRemainingTime(rawDur: number, rawAet: number) {
+  const aet = Duration.minutes(rawAet)
+  const dur = Duration.seconds(rawDur)
+
+  const isNeg = Duration.subtract(aet, dur).pipe(Duration.toMillis) === 0
+
+  const res = isNeg ? Duration.subtract(dur, aet) : Duration.subtract(aet, dur)
+
+  const parts = Duration.parts(res)
+
+  if (parts.minutes >= 10) return `${isNeg ? '-' : ''}${parts.minutes}m`
+  if (parts.minutes === 0) return `${isNeg ? '-' : ''}${parts.seconds}s`
+
+  return `${isNeg ? '-' : ''}${parts.minutes}:${parts.seconds.toString().padStart(2, '0')}`
 }
