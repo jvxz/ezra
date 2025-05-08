@@ -4,10 +4,11 @@ import { TopButtons } from './components/top-buttons'
 
 function App() {
   return (
-    <div className="flex h-[400px] w-68 flex-col gap-2 p-4">
+    <div className="flex h-[400px] w-68 flex-col gap-2 p-3">
       <TopButtons />
       <Separator />
       <TimeInfo />
+      <Separator />
     </div>
   )
 }

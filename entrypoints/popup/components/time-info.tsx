@@ -30,7 +30,7 @@ function TabsContentTime({ value }: { value: 'session' | 'day' | 'week' | 'month
   if (isLoading) {
     return (
       <TabsContent value={value}>
-        <div className="my-2 flex items-center justify-around text-2xl font-medium">
+        <div className="my-2 flex h-12 items-center justify-around text-2xl font-medium">
           <span>--</span>
           <span>--</span>
         </div>
@@ -41,7 +41,7 @@ function TabsContentTime({ value }: { value: 'session' | 'day' | 'week' | 'month
   if (!session) {
     return (
       <TabsContent value={value}>
-        <div className="my-2 flex items-center justify-around text-lg">
+        <div className="text-muted-foreground my-2 flex h-12 items-center justify-around text-lg">
           <span>No session active</span>
         </div>
       </TabsContent>
@@ -50,7 +50,7 @@ function TabsContentTime({ value }: { value: 'session' | 'day' | 'week' | 'month
 
   return (
     <TabsContent value={value}>
-      <div className="my-2 flex items-center justify-around text-2xl font-medium">
+      <div className="my-2 flex h-12 items-center justify-around text-2xl font-medium">
         <span>{formatDuration(session.duration, 'secs')}</span>
         <span className="text-orange-400">{session.efficiency}</span>
       </div>

@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button'
 import { useCurrentSession } from '@/lib/hooks/use-current-session'
 import { useStatus } from '@/lib/hooks/use-status'
+import { cn } from '@/src/lib/utils'
 
 function TopButtons() {
   return (
@@ -26,19 +27,14 @@ function StopButton() {
 
   return (
     <Button onClick={handleClick}>
-      {status?.session === true
-        ? (
-          <>
-            Stop
-            <span className="iconify icon-[ph--stop-fill]"></span>
-          </>
-        )
-        : (
-          <>
-            Start
-            <span className="iconify icon-[ph--play-fill]"></span>
-          </>
+      {status?.session === true ? 'Stop' : 'Start'}
+      <span
+        className={cn(
+          'iconify',
+          status?.session === true ? 'icon-[ph--stop-fill]' : 'icon-[ph--play-fill]',
         )}
+      >
+      </span>
     </Button>
   )
 }
