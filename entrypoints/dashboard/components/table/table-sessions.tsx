@@ -75,6 +75,13 @@ function CopyableTableCell({ value, className, ...props }: { value: string | num
         <ContextMenuLabel className="font-mono text-xs">{value}</ContextMenuLabel>
         <ContextMenuSeparator />
         <ContextMenuItem onSelect={() => void navigator.clipboard.writeText(value.toString())}>Copy value</ContextMenuItem>
+        <ContextMenuSeparator />
+        <ContextMenuItem>
+          Edit session
+        </ContextMenuItem>
+        <ContextMenuItem variant="destructive">
+          Delete session
+        </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>
   )
