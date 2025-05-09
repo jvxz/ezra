@@ -18,8 +18,8 @@ function TableSessions() {
   return (
     <div className="grow overflow-auto rounded border select-none">
       <div className="[&>div]:h-[800px]">
-        <Table>
-          <TableHeader className="bg-accent/70 sticky top-0 border-b backdrop-blur-sm">
+        <Table className="font-mono text-xs">
+          <TableHeader className="border-border sticky top-0 border-b backdrop-blur-sm">
             <TableRow>
               <TableHead className="w-32">Date</TableHead>
               <TableHead className="w-48">Description</TableHead>
@@ -65,7 +65,7 @@ function CopyableTableCell({ value }: { value: string | number }) {
         <TableCell className="group-data-[active=true]:bg-accent group-data-[active=true]:font-medium">{value}</TableCell>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuLabel>{value}</ContextMenuLabel>
+        <ContextMenuLabel className="font-mono text-xs">{value}</ContextMenuLabel>
         <ContextMenuSeparator />
         <ContextMenuItem onSelect={() => void navigator.clipboard.writeText(value.toString())}>Copy value</ContextMenuItem>
       </ContextMenuContent>
