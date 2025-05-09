@@ -50,7 +50,7 @@ function TableRow({ className, ...props }: ComponentProps<'tr'>) {
   return (
     <tr
       data-slot="table-row"
-      className={cn('data-[state=selected]:bg-muted/70 border-b transition-colors duration-100', className)}
+      className={cn('data-[state=selected]:bg-muted border-b', className)}
       {...props}
     />
   )
@@ -60,7 +60,7 @@ function TableHead({ className, ...props }: ComponentProps<'th'>) {
   return (
     <th
       data-slot="table-head"
-      className={cn('text-muted-foreground h-8 border-r px-2 text-left align-middle font-medium whitespace-nowrap transition duration-100 hover:bg-muted/50 last:border-0 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]', className)}
+      className={cn('text-muted-foreground h-8 border-r px-2 text-left align-middle font-medium whitespace-nowrap hover:bg-muted/50 last:border-0 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]', className)}
       {...props}
     />
   )
@@ -70,7 +70,7 @@ function TableCell({ className, ...props }: ComponentProps<'td'>) {
   return (
     <td
       data-slot="table-cell"
-      className={cn('hover:bg-muted/50 border-r p-1.5 align-middle whitespace-nowrap transition duration-100 last:border-0 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]', className)}
+      className={cn('hover:bg-muted/50 border-r p-1.5 align-middle whitespace-nowrap last:border-0 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]', className)}
       {...props}
     />
   )

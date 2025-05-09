@@ -66,7 +66,7 @@ function CopyableTableCell({ value, className, ...props }: { value: string | num
     <ContextMenu>
       <ContextMenuTrigger asChild>
         <TableCell
-          className={cn(className, 'group-data-[active=true]:bg-accent group-data-[active=true]:font-medium')}
+          className={cn(className, 'group-data-[active=true]:bg-accent/50 group-data-[active=true]:font-medium hover:bg-accent/50')}
           {...props}
         >{value}
         </TableCell>

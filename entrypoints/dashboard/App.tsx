@@ -6,7 +6,7 @@ function App() {
     <main className="container mx-auto h-screen font-sans">
       <div className="flex w-full gap-4 pt-56">
         <TableSessions />
-        <InfoCards />
+        {/* <InfoCards /> */}
       </div>
     </main>
   )
