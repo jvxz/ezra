@@ -50,6 +50,14 @@ export function calcEfficiency(durationInSecs: number, aetInMins: number): numbe
   return res === Infinity ? 0 : res
 }
 
+export function getEfficiencyColor(efficiency: number) {
+  if (efficiency <= 97) return 'text-red-400'
+  if (efficiency >= 103) return 'text-red-400'
+  if (efficiency <= 98) return 'text-orange-400'
+  if (efficiency >= 102) return 'text-orange-400'
+  return 'text-green-400'
+}
+
 export function getTaskProgress(durationInSeconds: number, aetInMinutes: number) {
   const durationInMinutes = durationInSeconds / 60
   return (durationInMinutes / aetInMinutes) * 100 > 100 ? 100 : (durationInMinutes / aetInMinutes) * 100
