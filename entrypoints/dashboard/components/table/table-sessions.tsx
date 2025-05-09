@@ -2,7 +2,7 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, Con
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
-import { formatTimestamp } from '@/lib/utils'
+import { cn, formatDuration, formatEfficiency, formatTimestamp, getEfficiencyColor } from '@/lib/utils'
 import { Suspense, useMemo } from 'react'
 import { TableSessionsFooter } from './table-sessions-footer'
 
@@ -44,8 +44,11 @@ function TableSessions() {
                   <CopyableTableCell value={item.description} />
                   <CopyableTableCell value={formatTimestamp(item.start, 'time')} />
                   <CopyableTableCell value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')} />
-                  <CopyableTableCell value={item.duration} />
-                  <CopyableTableCell value={item.efficiency} />
+                  <CopyableTableCell value={formatDuration(item.duration, 'secs')} />
+                  <CopyableTableCell
+                    className={getEfficiencyColor(item.efficiency, item.duration)}
+                    value={formatEfficiency(item.efficiency)}
+                  />
                   <CopyableTableCell value={`$${item.earnings}`} />
                 </TableRow>
               ))}
@@ -58,11 +61,15 @@ function TableSessions() {
   )
 }
 
-function CopyableTableCell({ value }: { value: string | number }) {
+function CopyableTableCell({ value, className, ...props }: { value: string | number } & React.HTMLAttributes<HTMLTableCellElement>) {
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
-        <TableCell className="group-data-[active=true]:bg-accent group-data-[active=true]:font-medium">{value}</TableCell>
+        <TableCell
+          className={cn(className, 'group-data-[active=true]:bg-accent group-data-[active=true]:font-medium')}
+          {...props}
+        >{value}
+        </TableCell>
       </ContextMenuTrigger>
       <ContextMenuContent>
         <ContextMenuLabel className="font-mono text-xs">{value}</ContextMenuLabel>

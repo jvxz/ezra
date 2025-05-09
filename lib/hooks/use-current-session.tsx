@@ -33,7 +33,7 @@ function useCurrentSession() {
     }
   })
 
-  const { mutate: start } = useMutation({
+  const { mutate: start, isPending: isStarting } = useMutation({
     mutationFn: async () => trpc.startSession.query(),
     onError: (error) => {
       qc.setQueryData(['session'], () => {
@@ -53,20 +53,20 @@ function useCurrentSession() {
         type: 'success',
       })
     },
-    onMutate: () => {
-      qc.setQueryData(['session'], () => {
-        return {
-          earnings: 0,
-          taskCount: 0,
-          duration: 0,
-          efficiency: 0,
-          isActive: true,
-        }
-      })
-    },
+    // onMutate: () => {
+    //   qc.setQueryData(['session'], () => {
+    //     return {
+    //       earnings: 0,
+    //       taskCount: 0,
+    //       duration: 0,
+    //       efficiency: 100,
+    //       isActive: true,
+    //     }
+    //   })
+    // },
   })
 
-  const { mutate: stop } = useMutation({
+  const { mutate: stop, isPending: isStopping } = useMutation({
     mutationFn: async () => trpc.stopSession.query(),
     onError: (error) => {
       setStatus({
@@ -94,6 +94,8 @@ function useCurrentSession() {
   return {
     data,
     isLoading,
+    isStopping,
+    isStarting,
     start,
     stop,
   }
