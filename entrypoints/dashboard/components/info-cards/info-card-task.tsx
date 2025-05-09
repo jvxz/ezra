@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
 import { useTask } from '@/lib/hooks/use-task'
-import { formatDuration } from '@/lib/utils'
+import { formatDuration, getTaskProgress } from '@/lib/utils'
 
 function InfoCardTask() {
   const { data } = useTask()
@@ -55,7 +55,7 @@ function InfoCardTask() {
             <div className="flex items-center gap-2">
               <span className="iconify icon-[ph--warning] text-lg" />
               <p
-                data-state={getProgress(data.duration, data.aet)}
+                data-state={getTaskProgress(data.duration, data.aet) === 100 ? 'over' : 'under'}
                 className="text-muted-foreground text-sm"
               >
                 {formatDuration(data.aet, 'mins')}
@@ -63,8 +63,8 @@ function InfoCardTask() {
             </div>
           </div>
           <Progress
-            data-state={getProgress(data.duration, data.aet) === 100 ? 'over' : 'under'}
-            value={getProgress(data.duration, data.aet)}
+            data-state={getTaskProgress(data.duration, data.aet) === 100 ? 'over' : 'under'}
+            value={getTaskProgress(data.duration, data.aet)}
           />
         </div>
       </CardContent>
@@ -72,9 +72,6 @@ function InfoCardTask() {
   )
 }
 
-function getProgress(durationInSeconds: number, aetInMinutes: number) {
-  const durationInMinutes = durationInSeconds / 60
-  return (durationInMinutes / aetInMinutes) * 100 > 100 ? 100 : (durationInMinutes / aetInMinutes) * 100
-}
+
 
 export { InfoCardTask }

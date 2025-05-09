@@ -49,3 +49,8 @@ export function calcEfficiency(durationInSecs: number, aetInMins: number): numbe
   const res = Number(((aetInSecs / durationInSecs) * 100).toFixed(2))
   return res === Infinity ? 0 : res
 }
+
+export function getTaskProgress(durationInSeconds: number, aetInMinutes: number) {
+  const durationInMinutes = durationInSeconds / 60
+  return (durationInMinutes / aetInMinutes) * 100 > 100 ? 100 : (durationInMinutes / aetInMinutes) * 100
+}

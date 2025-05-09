@@ -2,6 +2,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentSession } from '@/lib/hooks/use-current-session'
 import { useStatus } from '@/lib/hooks/use-status'
+import { formatDuration } from '@/lib/utils'
 
 function TimeInfo() {
   return (
@@ -44,28 +45,40 @@ function SessionTabContent() {
               <span className="iconify icon-[ph--clock]" />
               Elapsed time
             </div>
-            <span className="font-mono text-lg font-medium">{currentSession.duration}</span>
+            <span className="font-mono text-lg font-medium">
+              {formatDuration(currentSession.duration, 'secs') === '0' ? '0s' : formatDuration(currentSession.duration, 'secs')}
+            </span>
           </div>
           <div className="flex flex-col gap-1">
             <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
               <span className="iconify icon-[ph--chart-line-up]" />
               Efficiency
             </div>
-            <span className="font-mono text-lg font-medium text-amber-500">{currentSession.efficiency}</span>
+            <span className="font-mono text-lg font-medium text-amber-500">
+              {currentSession.efficiency}%
+            </span>
           </div>
           <div className="flex flex-col gap-1">
             <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
               <span className="iconify icon-[ph--list]" />
               Total tasks
             </div>
-            <span className="font-mono text-lg font-medium">{currentSession.taskCount}</span>
+            <span className="font-mono text-lg font-medium">
+              {currentSession.taskCount}
+            </span>
           </div>
           <div className="flex flex-col gap-1">
             <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
               <span className="iconify icon-[ph--money]" />
               Total earnings
             </div>
-            <span className="font-mono text-lg font-medium">{currentSession.earnings}</span>
+            <span className="font-mono text-lg font-medium">
+              {Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+              }).format(currentSession.earnings)}
+            </span>
           </div>
         </div>
       )}
