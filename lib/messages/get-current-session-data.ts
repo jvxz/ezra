@@ -25,15 +25,17 @@ const program = Effect.gen(function* (_) {
       cause: JSON.stringify(e),
       message: 'Failed to get tasks from local storage',
     }),
-  }), Effect.map(t => t ?? {
-    id: '',
-    description: '',
-    aet: 0,
-    start: 0,
-    duration: 0,
-    efficiency: 0,
-    earnings: 0,
   }))
+
+  if (!currentTask) {
+    return {
+      duration: currentSession.duration,
+      efficiency: currentSession.efficiency,
+      earnings: currentSession.earnings,
+      taskCount: currentSession.tasks.length,
+      isActive: currentSession.end === 'Active',
+    }
+  }
 
   const dur = currentTask.duration + currentSession.duration
   const aet = currentTask.aet + currentSession.tasks.reduce((a, c) => a + c.aet, 0)

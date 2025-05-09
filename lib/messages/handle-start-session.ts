@@ -41,7 +41,7 @@ const program = Effect.gen(function* () {
     end: 'Active',
     duration: 0,
     earnings: 0,
-    efficiency: 0,
+    efficiency: 100,
     tasks: [],
   }
 
