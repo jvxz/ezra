@@ -1,5 +1,7 @@
 import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { useCurrentSession } from '@/lib/hooks/use-current-session'
+import { useStatus } from '@/lib/hooks/use-status'
 
 function TimeInfo() {
   return (
@@ -15,40 +17,59 @@ function TimeInfo() {
           <TabsTrigger value="month">Month</TabsTrigger>
         </TabsList>
         <Separator />
-        <div className="flex flex-col p-4">
-          <div className="grid w-full grid-cols-2 gap-4">
-            <div className="flex flex-col gap-1">
-              <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
-                <span className="iconify icon-[ph--clock]" />
-                Elapsed time
-              </div>
-              <span className="font-mono text-lg font-medium">10:00</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
-                <span className="iconify icon-[ph--chart-line-up]" />
-                Efficiency
-              </div>
-              <span className="font-mono text-lg font-medium text-amber-500">98%</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
-                <span className="iconify icon-[ph--list]" />
-                Total tasks
-              </div>
-              <span className="font-mono text-lg font-medium">3</span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
-                <span className="iconify icon-[ph--dollar-sign]" />
-                Total earnings
-              </div>
-              <span className="font-mono text-lg font-medium">$2.01</span>
-            </div>
-          </div>
-        </div>
+        <SessionTabContent />
       </Tabs>
     </div>
+  )
+}
+
+function SessionTabContent() {
+  const { data: status } = useStatus()
+  const { data: currentSession } = useCurrentSession()
+
+  return (
+    <TabsContent
+      value="session"
+      className="flex flex-col p-4"
+    >
+      {!status?.session && (
+        <div className="flex h-full items-center justify-center">
+          <span className="text-muted-foreground">No session active</span>
+        </div>
+      )}
+      {status?.session && currentSession && (
+        <div className="grid w-full grid-cols-2 gap-4">
+          <div className="flex flex-col gap-1">
+            <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
+              <span className="iconify icon-[ph--clock]" />
+              Elapsed time
+            </div>
+            <span className="font-mono text-lg font-medium">{currentSession.duration}</span>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
+              <span className="iconify icon-[ph--chart-line-up]" />
+              Efficiency
+            </div>
+            <span className="font-mono text-lg font-medium text-amber-500">{currentSession.efficiency}</span>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
+              <span className="iconify icon-[ph--list]" />
+              Total tasks
+            </div>
+            <span className="font-mono text-lg font-medium">{currentSession.taskCount}</span>
+          </div>
+          <div className="flex flex-col gap-1">
+            <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
+              <span className="iconify icon-[ph--money]" />
+              Total earnings
+            </div>
+            <span className="font-mono text-lg font-medium">{currentSession.earnings}</span>
+          </div>
+        </div>
+      )}
+    </TabsContent>
   )
 }
 

@@ -16,7 +16,7 @@ function useStatus() {
     })
 
     return () => unsub()
-  }, [])
+  })
 
   return {
     data,
