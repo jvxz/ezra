@@ -1,9 +1,9 @@
 {
-  "name": "wxt-react-starter",
+  "name": "ezra",
   "type": "module",
   "version": "0.0.0",
   "private": true,
-  "description": "manifest.json description",
+  "description": "ezra",
   "scripts": {
     "dev": "wxt",
     "dev:firefox": "wxt -b firefox",

@@ -8,7 +8,7 @@ function TaskInfo() {
   if (!task) {
     return (
       <div className="space-y-2 p-4">
-        <div className="text-muted-foreground flex items-center gap-1">
+        <div className="text-muted-foreground flex items-center">
           <p>Task</p>
         </div>
         <div className="space-y-2">
@@ -39,9 +39,11 @@ function TaskInfo() {
 
   return (
     <div className="space-y-2 p-4">
-      <div className="text-muted-foreground flex items-center gap-1">
-        <span className="iconify icon-[ph--target]"></span>
+      <div className="text-muted-foreground flex items-center justify-between">
         <p>Task</p>
+        <p className="text-muted-foreground animate-in fade-in-0 slide-in-from-right-50 font-mono duration-150">
+          {task.description}
+        </p>
       </div>
       <div className="space-y-2">
         <div className="flex items-center justify-between">

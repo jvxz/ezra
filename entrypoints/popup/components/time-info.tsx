@@ -6,21 +6,19 @@ import { formatDuration } from '@/lib/utils'
 
 function TimeInfo() {
   return (
-    <div>
-      <Tabs
-        defaultValue="session"
-        className="w-full gap-0"
-      >
-        <TabsList className="bg-card w-full gap-2 px-4 *:h-8">
-          <TabsTrigger value="session">Session</TabsTrigger>
-          <TabsTrigger value="day">Day</TabsTrigger>
-          <TabsTrigger value="week">Week</TabsTrigger>
-          <TabsTrigger value="month">Month</TabsTrigger>
-        </TabsList>
-        <Separator />
-        <SessionTabContent />
-      </Tabs>
-    </div>
+    <Tabs
+      defaultValue="session"
+      className="w-full gap-0"
+    >
+      <TabsList className="bg-card w-full gap-2 px-4 *:h-8">
+        <TabsTrigger value="session">Session</TabsTrigger>
+        <TabsTrigger value="day">Day</TabsTrigger>
+        <TabsTrigger value="week">Week</TabsTrigger>
+        <TabsTrigger value="month">Month</TabsTrigger>
+      </TabsList>
+      <Separator />
+      <SessionTabContent />
+    </Tabs>
   )
 }
 
