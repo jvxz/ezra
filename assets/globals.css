@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin 'tailwind-scrollbar';
@@ -17,6 +18,7 @@
 
 :root {
   --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', system-ui, monospace;
 
   --hue: 220;
   --saturation: 100%; 
