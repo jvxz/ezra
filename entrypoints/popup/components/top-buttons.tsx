@@ -5,7 +5,7 @@ import { cn } from '@/lib/utils'
 
 function TopButtons() {
   return (
-    <div className="flex items-center gap-2 *:flex-1">
+    <div className="bg-card flex items-center gap-2 p-4 *:flex-1">
       <StopButton />
       <DashboardButton />
     </div>

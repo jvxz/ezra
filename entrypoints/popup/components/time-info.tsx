@@ -1,60 +1,54 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { useCurrentSession } from '@/lib/hooks/use-current-session'
-import { formatDuration } from '@/lib/utils'
+import { Separator } from '@/components/ui/separator'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 function TimeInfo() {
   return (
     <div>
       <Tabs
         defaultValue="session"
-        className="w-full"
+        className="w-full gap-0"
       >
-        <TabsList className="w-full">
+        <TabsList className="bg-card w-full gap-2 px-4 *:h-8">
           <TabsTrigger value="session">Session</TabsTrigger>
           <TabsTrigger value="day">Day</TabsTrigger>
           <TabsTrigger value="week">Week</TabsTrigger>
+          <TabsTrigger value="month">Month</TabsTrigger>
         </TabsList>
-        <TabsContentTime value="session" />
-        <TabsContentTime value="day" />
-        <TabsContentTime value="week" />
-        <TabsContentTime value="month" />
+        <Separator />
+        <div className="flex flex-col p-4">
+          <div className="grid w-full grid-cols-2 gap-4">
+            <div className="flex flex-col gap-1">
+              <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
+                <span className="iconify icon-[ph--clock]" />
+                Elapsed time
+              </div>
+              <span className="font-mono text-lg font-medium">10:00</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
+                <span className="iconify icon-[ph--chart-line-up]" />
+                Efficiency
+              </div>
+              <span className="font-mono text-lg font-medium text-amber-500">98%</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
+                <span className="iconify icon-[ph--list]" />
+                Total tasks
+              </div>
+              <span className="font-mono text-lg font-medium">3</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <div className="text-muted-foreground flex items-center gap-1 text-xs font-medium">
+                <span className="iconify icon-[ph--dollar-sign]" />
+                Total earnings
+              </div>
+              <span className="font-mono text-lg font-medium">$2.01</span>
+            </div>
+          </div>
+        </div>
       </Tabs>
     </div>
-  )
-}
-
-// TODO: Add a loading state
-function TabsContentTime({ value }: { value: 'session' | 'day' | 'week' | 'month' }) {
-  const { data: session, isLoading } = useCurrentSession()
-
-  if (isLoading) {
-    return (
-      <TabsContent value={value}>
-        <div className="my-2 flex h-12 items-center justify-around text-2xl font-medium">
-          <span>--</span>
-          <span>--</span>
-        </div>
-      </TabsContent>
-    )
-  }
-
-  if (!session) {
-    return (
-      <TabsContent value={value}>
-        <div className="text-muted-foreground my-2 flex h-12 items-center justify-around text-lg">
-          <span>No session active</span>
-        </div>
-      </TabsContent>
-    )
-  }
-
-  return (
-    <TabsContent value={value}>
-      <div className="my-2 flex h-12 items-center justify-around text-2xl font-medium">
-        <span>{formatDuration(session.duration, 'secs')}</span>
-        <span className="text-orange-400">{session.efficiency}</span>
-      </div>
-    </TabsContent>
   )
 }
 
