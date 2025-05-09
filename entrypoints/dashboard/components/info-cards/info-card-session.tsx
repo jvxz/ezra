@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useCurrentSession } from '@/lib/hooks/use-current-session'
 import { useStatus } from '@/lib/hooks/use-status'
-import { formatDuration, getEfficiencyColor } from '@/lib/utils'
+import { formatDuration, formatEfficiency, getEfficiencyColor } from '@/lib/utils'
 
 function InfoCardSession() {
   const { data, isStarting } = useCurrentSession()
@@ -57,8 +57,6 @@ function InfoCardSession() {
     )
   }
 
-  const effState = getEfficiencyColor(data.efficiency)
-
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
@@ -75,8 +73,8 @@ function InfoCardSession() {
           </div>
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Efficiency</h2>
-            <div className={`text-xl font-medium ${effState}`}>
-              {data.efficiency}%
+            <div className={`text-xl font-medium ${getEfficiencyColor(data.efficiency, data.duration)}`}>
+              {formatEfficiency(data.efficiency)}
             </div>
           </div>
 

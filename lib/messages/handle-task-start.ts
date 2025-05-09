@@ -47,7 +47,7 @@ function program(data: TaskStartParams, jobs: JobScheduler) {
       description: data.description,
       start: Date.now(),
       duration: 0,
-      efficiency: 0,
+      efficiency: calcEfficiency(0, data.aet),
       earnings: 0,
       aet: data.aet,
     }

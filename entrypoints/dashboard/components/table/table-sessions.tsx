@@ -2,7 +2,7 @@ import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, Con
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
-import { cn, formatTimestamp, getEfficiencyColor } from '@/lib/utils'
+import { cn, formatDuration, formatEfficiency, formatTimestamp, getEfficiencyColor } from '@/lib/utils'
 import { Suspense, useMemo } from 'react'
 import { TableSessionsFooter } from './table-sessions-footer'
 
@@ -44,10 +44,10 @@ function TableSessions() {
                   <CopyableTableCell value={item.description} />
                   <CopyableTableCell value={formatTimestamp(item.start, 'time')} />
                   <CopyableTableCell value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')} />
-                  <CopyableTableCell value={item.duration} />
+                  <CopyableTableCell value={formatDuration(item.duration, 'secs')} />
                   <CopyableTableCell
-                    className={getEfficiencyColor(item.efficiency)}
-                    value={`${item.efficiency}%`}
+                    className={getEfficiencyColor(item.efficiency, item.duration)}
+                    value={formatEfficiency(item.efficiency)}
                   />
                   <CopyableTableCell value={`$${item.earnings}`} />
                 </TableRow>
