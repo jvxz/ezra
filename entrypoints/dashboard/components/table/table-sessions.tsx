@@ -3,19 +3,21 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
 import { useSessionMutations } from '@/lib/hooks/use-session-mutations'
-import { useSelectedItems } from '@/lib/store/selected-items'
+import { useSelectedSessions } from '@/lib/store/selected-sessions'
 import { cn, formatDuration, formatEfficiency, formatTimestamp, getEfficiencyColor } from '@/lib/utils'
 import { Suspense, useMemo } from 'react'
 import { TableSessionsFooter } from './table-sessions-footer'
 
 function TableSessions() {
   const { data } = useAllSessions()
-  const { selectedItems } = useDragSelect()
+  const { setSessions, selectedSessions } = useSelectedSessions()
   const sortedItems = useMemo(() => {
     return data?.sort((a, b) => {
       return b.start - a.start
     })
   }, [data])
+
+  useDragSelect(setSessions)
 
   return (
     <div className="grow overflow-auto rounded border select-none">
@@ -38,7 +40,7 @@ function TableSessions() {
                 <TableRow
                   key={item.id}
                   data-id={item.id.toString()}
-                  data-state={selectedItems.has(item.id.toString()) ? 'selected' : ''}
+                  data-state={selectedSessions.has(item.id.toString()) ? 'selected' : ''}
                   data-active={item.end === 'Active' ? 'true' : 'false'}
                   className="group"
                 >
@@ -67,7 +69,7 @@ function TableSessions() {
 
 function SessionTableCell({ value, className, ...props }: { value: string | number } & React.HTMLAttributes<HTMLTableCellElement>) {
   const { deleteSessions } = useSessionMutations()
-  const { selectedItems } = useSelectedItems()
+  const { selectedSessions } = useSelectedSessions()
 
   return (
     <ContextMenu>
@@ -84,9 +86,9 @@ function SessionTableCell({ value, className, ...props }: { value: string | numb
         <ContextMenuSeparator />
         <ContextMenuItem
           variant="destructive"
-          onSelect={() => deleteSessions(Array.from(selectedItems))}
+          onSelect={() => deleteSessions(Array.from(selectedSessions))}
         >
-          {selectedItems.size > 1 ? 'Delete sessions' : 'Delete session'}
+          {selectedSessions.size > 1 ? 'Delete sessions' : 'Delete session'}
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

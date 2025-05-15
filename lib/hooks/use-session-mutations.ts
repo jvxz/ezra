@@ -2,7 +2,7 @@ import type { deleteSessionsValidator } from '../messages/handle-delete-sessions
 import type { Session } from '../storage/sessions'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { createTrpc } from '../messages/trpc'
-import { useSelectedItems } from '../store/selected-items'
+import { useSelectedSessions } from '../store/selected-sessions'
 import { useStatusStore } from '../store/status'
 
 const trpc = createTrpc()
@@ -10,7 +10,7 @@ const trpc = createTrpc()
 function useSessionMutations() {
   const { setStatus } = useStatusStore()
   const qc = useQueryClient()
-  const { resetItems } = useSelectedItems()
+  const { resetItems } = useSelectedSessions()
 
   const { mutate: deleteSessions, isPending: isDeletingSessions } = useMutation({
     mutationFn: async (ids: typeof deleteSessionsValidator.t) => trpc.deleteSessions.mutate(ids),

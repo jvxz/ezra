@@ -1,9 +1,4 @@
-import { useSelectedItems } from '../store/selected-items'
-
-function useDragSelect() {
-  // const [selItems, setSelItems] = useState<Set<string>>(new Set())
-  const { setItems, selectedItems } = useSelectedItems()
-
+function useDragSelect(dispatch: (items: Set<string>) => void) {
   const selStateRef = useRef<{
     state: boolean
     mode: 'enable' | 'disable'
@@ -57,7 +52,7 @@ function useDragSelect() {
     const handlePointerUp = () => {
       if (!selStateRef.current.state) return
       selStateRef.current.state = false
-      setItems(new Set(selItemsRef.current))
+      dispatch(new Set(selItemsRef.current))
     }
 
     document.addEventListener('pointerup', handlePointerUp)
@@ -69,11 +64,7 @@ function useDragSelect() {
       document.removeEventListener('pointerdown', handlePointerDown)
       document.removeEventListener('mouseover', handleMouseOver)
     }
-  }, [setItems])
-
-  return {
-    selectedItems,
-  }
+  }, [dispatch])
 }
 
 export { useDragSelect }

@@ -1,18 +1,24 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
-import { useSelectedItems } from '@/lib/store/selected-items'
+import { useAllTasks } from '@/lib/hooks/use-all-tasks'
+import { useDragSelect } from '@/lib/hooks/use-drag-select'
+import { useSelectedSessions } from '@/lib/store/selected-sessions'
+import { useSelectedTasks } from '@/lib/store/selected-tasks'
 import { Suspense } from 'react'
-import { TableSessionsFooter } from './table-sessions-footer'
+import { TableTasksFooter } from './table-tasks-footer'
 
 function TableTasks() {
-  const { selectedItems } = useSelectedItems()
+  const { setTasks, selectedTasks } = useSelectedTasks()
+  const { data: allTasks } = useAllTasks()
+  const { selectedSessions } = useSelectedSessions()
   const { data: sessions } = useAllSessions()
 
   const selectedSessionsTasks = useMemo(() => {
-    const x = sessions?.filter(session => selectedItems.has(session.id.toString()))
-
+    const x = sessions?.filter(session => selectedSessions.has(session.id.toString()))
     return x?.map(session => session.tasks).flat()
-  }, [sessions, selectedItems])
+  }, [sessions, selectedSessions])
+
+  useDragSelect(setTasks)
 
   return (
     <div className="grow overflow-auto rounded border select-none">
@@ -31,22 +37,44 @@ function TableTasks() {
           </TableHeader>
           <Suspense>
             <TableBody>
-              {selectedSessionsTasks?.map(task => (
-                <TableRow key={task.id}>
-                  <TableCell className="w-32 truncate">{task.id}</TableCell>
-                  <TableCell>{task.description}</TableCell>
-                  <TableCell>{task.start}</TableCell>
-                  <TableCell>{task.aet}</TableCell>
-                  <TableCell>{task.duration}</TableCell>
-                  <TableCell>{task.efficiency}</TableCell>
-                  <TableCell>{task.earnings}</TableCell>
+              {selectedSessionsTasks && selectedSessionsTasks.length > 0 ? selectedSessionsTasks.map(item => (
+                <TableRow
+                  data-id={item.id.toString()}
+                  data-state={selectedSessions.has(item.id.toString()) ? 'selected' : ''}
+                  // data-active={item.end === 'Active' ? 'true' : 'false'}
+                  className="group"
+                  key={item.id}
+                >
+                  <TableCell className="w-32 truncate">{item.id}</TableCell>
+                  <TableCell>{item.description}</TableCell>
+                  <TableCell>{item.start}</TableCell>
+                  <TableCell>{item.aet}</TableCell>
+                  <TableCell>{item.duration}</TableCell>
+                  <TableCell>{item.efficiency}</TableCell>
+                  <TableCell>{item.earnings}</TableCell>
+                </TableRow>
+              )) : allTasks?.map(item => (
+                <TableRow
+                  data-id={item.id.toString()}
+                  data-state={selectedTasks.has(item.id.toString()) ? 'selected' : ''}
+                  // data-active={item.end === 'Active' ? 'true' : 'false'}
+                  className="group"
+                  key={item.id}
+                >
+                  <TableCell className="w-32 truncate">{item.id}</TableCell>
+                  <TableCell>{item.description}</TableCell>
+                  <TableCell>{item.start}</TableCell>
+                  <TableCell>{item.aet}</TableCell>
+                  <TableCell>{item.duration}</TableCell>
+                  <TableCell>{item.efficiency}</TableCell>
+                  <TableCell>{item.earnings}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
           </Suspense>
         </Table>
       </div>
-      <TableSessionsFooter />
+      <TableTasksFooter />
     </div>
   )
 }
