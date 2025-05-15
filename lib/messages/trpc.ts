@@ -6,6 +6,7 @@ import { ArkErrors } from 'arktype'
 import { chromeLink } from 'trpc-browser/link'
 import { getAllSessionData } from './get-all-session-data'
 import { getCurrentSessionData } from './get-current-session-data'
+import { deleteSessionsValidator, handleDeleteSessions } from './handle-delete-sessions'
 import { handleStartSession } from './handle-start-session'
 import { handleStopSession } from './handle-stop-session'
 import { handleTaskStart, taskStartValidator } from './handle-task-start'
@@ -37,9 +38,15 @@ export const appRouter = t.router({
 
     return handleTaskStop(input.action, input.rate)
   }),
-  test: t.procedure.query(async () => {
-    return 'attempting to connect...'
-  }),
+  deleteSessions: t.procedure
+    .input(deleteSessionsValidator)
+    .mutation(async ({ input }) => {
+      if (input instanceof ArkErrors) {
+        throw new TypeError(input.summary)
+      }
+
+      return handleDeleteSessions(input)
+    }),
 })
 
 export type AppRouter = typeof appRouter

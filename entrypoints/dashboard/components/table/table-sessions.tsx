@@ -1,7 +1,8 @@
-import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu'
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
+import { useSessionMutations } from '@/lib/hooks/use-session-mutations'
 import { cn, formatDuration, formatEfficiency, formatTimestamp, getEfficiencyColor } from '@/lib/utils'
 import { Suspense, useMemo } from 'react'
 import { TableSessionsFooter } from './table-sessions-footer'
@@ -40,16 +41,35 @@ function TableSessions() {
                   data-active={item.end === 'Active' ? 'true' : 'false'}
                   className="group"
                 >
-                  <CopyableTableCell value={formatTimestamp(item.start, 'date')} />
-                  <CopyableTableCell value={item.description} />
-                  <CopyableTableCell value={formatTimestamp(item.start, 'time')} />
-                  <CopyableTableCell value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')} />
-                  <CopyableTableCell value={formatDuration(item.duration, 'secs')} />
-                  <CopyableTableCell
+                  <SessionTableCell
+                    selectedItems={selectedItems}
+                    value={formatTimestamp(item.start, 'date')}
+                  />
+                  <SessionTableCell
+                    selectedItems={selectedItems}
+                    value={item.description}
+                  />
+                  <SessionTableCell
+                    selectedItems={selectedItems}
+                    value={formatTimestamp(item.start, 'time')}
+                  />
+                  <SessionTableCell
+                    selectedItems={selectedItems}
+                    value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')}
+                  />
+                  <SessionTableCell
+                    selectedItems={selectedItems}
+                    value={formatDuration(item.duration, 'secs')}
+                  />
+                  <SessionTableCell
+                    selectedItems={selectedItems}
                     className={getEfficiencyColor(item.efficiency, item.duration)}
                     value={formatEfficiency(item.efficiency)}
                   />
-                  <CopyableTableCell value={`$${item.earnings}`} />
+                  <SessionTableCell
+                    selectedItems={selectedItems}
+                    value={`$${item.earnings}`}
+                  />
                 </TableRow>
               ))}
             </TableBody>
@@ -61,7 +81,9 @@ function TableSessions() {
   )
 }
 
-function CopyableTableCell({ value, className, ...props }: { value: string | number } & React.HTMLAttributes<HTMLTableCellElement>) {
+function SessionTableCell({ value, className, selectedItems, ...props }: { value: string | number, selectedItems: Set<string> } & React.HTMLAttributes<HTMLTableCellElement>) {
+  const { deleteSessions } = useSessionMutations()
+
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>
@@ -72,15 +94,14 @@ function CopyableTableCell({ value, className, ...props }: { value: string | num
         </TableCell>
       </ContextMenuTrigger>
       <ContextMenuContent>
-        <ContextMenuLabel className="font-mono text-xs">{value}</ContextMenuLabel>
-        <ContextMenuSeparator />
+        {/* <ContextMenuLabel className="font-mono text-xs">{value}</ContextMenuLabel> */}
         <ContextMenuItem onSelect={() => void navigator.clipboard.writeText(value.toString())}>Copy value</ContextMenuItem>
         <ContextMenuSeparator />
-        <ContextMenuItem>
-          Edit session
-        </ContextMenuItem>
-        <ContextMenuItem variant="destructive">
-          Delete session
+        <ContextMenuItem
+          variant="destructive"
+          onSelect={() => deleteSessions(Array.from(selectedItems))}
+        >
+          {selectedItems.size > 1 ? 'Delete sessions' : 'Delete session'}
         </ContextMenuItem>
       </ContextMenuContent>
     </ContextMenu>

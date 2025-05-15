@@ -1,9 +1,11 @@
 import { Button } from '@/components/ui/button'
 import { TableFooter } from '@/components/ui/table'
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
+import { useSessionMutations } from '@/lib/hooks/use-session-mutations'
 
 function TableSessionsFooter({ selectedItems }: { selectedItems: Set<string> }) {
   const { data } = useAllSessions()
+  const { deleteSessions } = useSessionMutations()
 
   return (
     <TableFooter className="bg-card flex h-10 w-full items-center justify-between border-t px-3">
@@ -15,6 +17,7 @@ function TableSessionsFooter({ selectedItems }: { selectedItems: Set<string> }) 
           <Button
             variant="ghost"
             size="sm"
+            onClick={() => deleteSessions(Array.from(selectedItems))}
           >
             Delete
           </Button>
