@@ -94,7 +94,5 @@ export default defineContentScript({
         return Effect.succeed(false)
       }))
       .pipe(Effect.runPromise)
-
-    trpc.test.query().then(result => console.warn('TRPC test result:', result)).catch(err => console.error('TRPC test error:', err))
   },
 })
