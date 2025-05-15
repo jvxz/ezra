@@ -17,7 +17,7 @@ function TableSessions() {
     })
   }, [data])
 
-  useDragSelect(setSessions)
+  useDragSelect('session', setSessions)
 
   return (
     <div className="grow overflow-auto rounded border select-none">
@@ -42,6 +42,7 @@ function TableSessions() {
                   data-id={item.id.toString()}
                   data-state={selectedSessions.has(item.id.toString()) ? 'selected' : ''}
                   data-active={item.end === 'Active' ? 'true' : 'false'}
+                  data-type="session"
                   className="group"
                 >
                   <SessionTableCell

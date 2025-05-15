@@ -18,7 +18,7 @@ function TableTasks() {
     return x?.map(session => session.tasks).flat()
   }, [sessions, selectedSessions])
 
-  useDragSelect(setTasks)
+  useDragSelect('task', setTasks)
 
   return (
     <div className="grow overflow-auto rounded border select-none">
@@ -41,6 +41,7 @@ function TableTasks() {
                 <TableRow
                   data-id={item.id.toString()}
                   data-state={selectedSessions.has(item.id.toString()) ? 'selected' : ''}
+                  data-type="task"
                   // data-active={item.end === 'Active' ? 'true' : 'false'}
                   className="group"
                   key={item.id}
@@ -58,6 +59,7 @@ function TableTasks() {
                   data-id={item.id.toString()}
                   data-state={selectedTasks.has(item.id.toString()) ? 'selected' : ''}
                   // data-active={item.end === 'Active' ? 'true' : 'false'}
+                  data-type="task"
                   className="group"
                   key={item.id}
                 >

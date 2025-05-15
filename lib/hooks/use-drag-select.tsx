@@ -1,4 +1,4 @@
-function useDragSelect(dispatch: (items: Set<string>) => void) {
+function useDragSelect(id: string, dispatch: (items: Set<string>) => void) {
   const selStateRef = useRef<{
     state: boolean
     mode: 'enable' | 'disable'
@@ -26,7 +26,7 @@ function useDragSelect(dispatch: (items: Set<string>) => void) {
       if (event.button !== 0) return
 
       const target = (event.target as HTMLElement).parentElement
-      if (!target || target.tagName !== 'TR' || !target.dataset.id) return
+      if (!target || target.tagName !== 'TR' || !target.dataset.id || target.dataset.type !== id) return
 
       selStateRef.current.state = true
 
