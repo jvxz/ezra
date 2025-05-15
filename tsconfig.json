@@ -1,6 +1,10 @@
 {
   "extends": "./.wxt/tsconfig.json",
   "compilerOptions": {
+    "plugins": [{
+      "name": "@effect/language-service"
+    }
+    ],
     "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
