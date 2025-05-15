@@ -2,10 +2,12 @@ import { Button } from '@/components/ui/button'
 import { TableFooter } from '@/components/ui/table'
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useSessionMutations } from '@/lib/hooks/use-session-mutations'
+import { useSelectedItems } from '@/lib/store/selected-items'
 
-function TableSessionsFooter({ selectedItems }: { selectedItems: Set<string> }) {
+function TableSessionsFooter() {
   const { data } = useAllSessions()
   const { deleteSessions } = useSessionMutations()
+  const { selectedItems } = useSelectedItems()
 
   return (
     <TableFooter className="bg-card flex h-10 w-full items-center justify-between border-t px-3">

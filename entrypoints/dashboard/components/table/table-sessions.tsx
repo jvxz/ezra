@@ -3,13 +3,14 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useAllSessions } from '@/lib/hooks/use-all-sessions'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
 import { useSessionMutations } from '@/lib/hooks/use-session-mutations'
+import { useSelectedItems } from '@/lib/store/selected-items'
 import { cn, formatDuration, formatEfficiency, formatTimestamp, getEfficiencyColor } from '@/lib/utils'
 import { Suspense, useMemo } from 'react'
 import { TableSessionsFooter } from './table-sessions-footer'
 
 function TableSessions() {
   const { data } = useAllSessions()
-  const selectedItems = useDragSelect()
+  const { selectedItems } = useDragSelect()
   const sortedItems = useMemo(() => {
     return data?.sort((a, b) => {
       return b.start - a.start
@@ -42,47 +43,31 @@ function TableSessions() {
                   className="group"
                 >
                   <SessionTableCell
-                    selectedItems={selectedItems}
                     value={formatTimestamp(item.start, 'date')}
                   />
+                  <SessionTableCell value={item.description} />
+                  <SessionTableCell value={formatTimestamp(item.start, 'time')} />
+                  <SessionTableCell value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')} />
+                  <SessionTableCell value={formatDuration(item.duration, 'secs')} />
                   <SessionTableCell
-                    selectedItems={selectedItems}
-                    value={item.description}
-                  />
-                  <SessionTableCell
-                    selectedItems={selectedItems}
-                    value={formatTimestamp(item.start, 'time')}
-                  />
-                  <SessionTableCell
-                    selectedItems={selectedItems}
-                    value={item.end === 'Active' ? 'Active' : formatTimestamp(item.end, 'time')}
-                  />
-                  <SessionTableCell
-                    selectedItems={selectedItems}
-                    value={formatDuration(item.duration, 'secs')}
-                  />
-                  <SessionTableCell
-                    selectedItems={selectedItems}
                     className={getEfficiencyColor(item.efficiency, item.duration)}
                     value={formatEfficiency(item.efficiency)}
                   />
-                  <SessionTableCell
-                    selectedItems={selectedItems}
-                    value={`$${item.earnings}`}
-                  />
+                  <SessionTableCell value={`$${item.earnings}`} />
                 </TableRow>
               ))}
             </TableBody>
           </Suspense>
         </Table>
       </div>
-      <TableSessionsFooter selectedItems={selectedItems} />
+      <TableSessionsFooter />
     </div>
   )
 }
 
-function SessionTableCell({ value, className, selectedItems, ...props }: { value: string | number, selectedItems: Set<string> } & React.HTMLAttributes<HTMLTableCellElement>) {
+function SessionTableCell({ value, className, ...props }: { value: string | number } & React.HTMLAttributes<HTMLTableCellElement>) {
   const { deleteSessions } = useSessionMutations()
+  const { selectedItems } = useSelectedItems()
 
   return (
     <ContextMenu>
