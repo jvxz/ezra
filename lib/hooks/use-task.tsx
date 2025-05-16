@@ -1,23 +1,13 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { createTrpc } from '../messages/trpc'
-import { taskStorage } from '../storage/tasks'
 
 const trpc = createTrpc()
 
 function useTask() {
-  const qc = useQueryClient()
   const { data, isLoading } = useQuery({
     queryKey: ['task'],
-    queryFn: async () => taskStorage.getValue(),
+    queryFn: async () => trpc.getCurrentSessionData.query(),
   })
-
-  useEffect(() => {
-    const end = taskStorage.watch(() => void qc.invalidateQueries({
-      queryKey: ['task'],
-    }))
-
-    return () => end()
-  }, [])
 
   const { mutate: _debugStart } = useMutation({
     mutationFn: async () => trpc.startTask.mutate({
@@ -30,7 +20,6 @@ function useTask() {
   const { mutate: _debugStop } = useMutation({
     mutationFn: async () => trpc.stopTask.mutate({
       action: 'submit',
-      rate: 15,
     }),
   })
 

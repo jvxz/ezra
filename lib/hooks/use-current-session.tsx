@@ -1,7 +1,5 @@
 import { createTrpc } from '@/lib/messages/trpc'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { sessionStorage } from '../storage/sessions'
-import { taskStorage } from '../storage/tasks'
 import { useStatusStore } from '../store/status'
 
 const trpc = createTrpc()
@@ -14,27 +12,8 @@ function useCurrentSession() {
     queryFn: async () => trpc.getCurrentSessionData.query(),
   })
 
-  useEffect(() => {
-    const unsub = sessionStorage.watch(() => {
-      void qc.invalidateQueries({
-        queryKey: ['session'],
-      })
-    })
-
-    const unsubTask = taskStorage.watch(() => {
-      void qc.invalidateQueries({
-        queryKey: ['session'],
-      })
-    })
-
-    return () => {
-      unsub()
-      unsubTask()
-    }
-  })
-
   const { mutate: start, isPending: isStarting } = useMutation({
-    mutationFn: async () => trpc.startSession.query(),
+    mutationFn: async () => trpc.startSession.mutate(),
     onError: (error) => {
       qc.setQueryData(['session'], () => {
         return null
@@ -53,21 +32,10 @@ function useCurrentSession() {
         type: 'success',
       })
     },
-    // onMutate: () => {
-    //   qc.setQueryData(['session'], () => {
-    //     return {
-    //       earnings: 0,
-    //       taskCount: 0,
-    //       duration: 0,
-    //       efficiency: 100,
-    //       isActive: true,
-    //     }
-    //   })
-    // },
   })
 
   const { mutate: stop, isPending: isStopping } = useMutation({
-    mutationFn: async () => trpc.stopSession.query(),
+    mutationFn: async () => trpc.stopSession.mutate(),
     onError: (error) => {
       setStatus({
         message: error.message,
@@ -84,11 +52,11 @@ function useCurrentSession() {
         type: 'success',
       })
     },
-    onMutate: () => {
-      qc.setQueryData(['session'], () => {
-        return null
-      })
-    },
+    // onMutate: () => {
+    //   qc.setQueryData(['session'], () => {
+    //     return null
+    //   })
+    // },
   })
 
   return {
