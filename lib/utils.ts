@@ -1,3 +1,4 @@
+import type { Doc } from '@/convex/_generated/dataModel'
 import type { ClassValue } from 'clsx'
 import { clsx } from 'clsx'
 import * as dtz from 'date-fns-tz'
@@ -48,6 +49,20 @@ export function calcEfficiency(durationInSecs: number, aetInMins: number): numbe
   const aetInSecs = aetInMins * 60
   const res = Number(((aetInSecs / durationInSecs) * 100).toFixed(2))
   return res === Infinity ? 0 : res
+}
+
+export function calcTaskTotals(tasks: Doc<'tasks'>[], rate: number) {
+  const duration = tasks.reduce((acc, curr) => acc + curr.duration, 0)
+  const aet = tasks.reduce((acc, curr) => acc + curr.aet, 0)
+  const efficiency = calcEfficiency(duration, aet)
+  const earnings = calcEarnings(duration, rate)
+
+  return {
+    duration,
+    efficiency,
+    earnings,
+    aet,
+  }
 }
 
 export function getEfficiencyColor(efficiency: number, duration: number) {
