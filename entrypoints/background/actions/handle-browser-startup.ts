@@ -1,7 +1,5 @@
-import { handleStopSession } from '@/lib/messages/handle-stop-session'
-import { sessionStorage } from '@/lib/storage/sessions'
+import { createTrpc } from '@/lib/messages/trpc'
 import { statusStorage } from '@/lib/storage/status'
-import { taskStorage } from '@/lib/storage/tasks'
 import { create } from 'mutative'
 import { handleTaskRelease } from './handle-task-release'
 
@@ -11,22 +9,26 @@ export async function handleBrowserStartup() {
   })
 }
 
+// TODO: allow recovery
 async function main() {
+  const trpc = createTrpc()
+
   const status = await statusStorage.getValue()
 
-  const task = await taskStorage.getValue()
-
-  const session = await sessionStorage.getValue()
-
-  if (task) {
+  if (status.task) {
     handleTaskRelease()
     await statusStorage.setValue(create(status, (draft) => {
       draft.task = false
     }))
+
+    await trpc.stopTask.mutate({
+      action: 'release',
+    })
   }
 
-  if (session) {
-    await handleStopSession()
+  if (status.session) {
+    await trpc.stopSession.mutate()
+
     await statusStorage.setValue(create(status, (draft) => {
       draft.session = false
     }))
