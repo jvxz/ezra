@@ -1,7 +1,8 @@
-import type { Task } from '@/lib/storage/tasks'
 import type { JobScheduler } from '@webext-core/job-scheduler'
-import { taskStorage } from '@/lib/storage/tasks'
-import { calcEarnings, calcEfficiency } from '@/lib/utils'
+import type { ConvexClient } from 'convex/browser'
+import { api } from '@/convex/_generated/api'
+import { taskDataStorage } from '@/lib/storage/tasks'
+import { calcEfficiency } from '@/lib/utils'
 import { type } from 'arktype'
 import { Data, Duration, Effect } from 'effect'
 import { create } from 'mutative'
@@ -20,8 +21,8 @@ export const taskStartValidator = type({
 
 export type TaskStartParams = typeof taskStartValidator.t
 
-function program(data: TaskStartParams, jobs: JobScheduler) {
-  return Effect.gen(function* () {
+function program(data: TaskStartParams, jobs: JobScheduler, convex: ConvexClient) {
+  return Effect.gen(function* (_) {
     const status = yield* Effect.tryPromise({
       try: async () => statusStorage.getValue(),
       catch: e => new TaskStartError({
@@ -42,7 +43,16 @@ function program(data: TaskStartParams, jobs: JobScheduler) {
       })
     }
 
-    const draft: Task = {
+    const currentSession = yield* _(Effect.tryPromise({
+      try: async () => convex.query(api.sessions.pickCurrentSession, {
+      }),
+      catch: e => new TaskStartError({
+        cause: e,
+        message: 'Failed to get current session',
+      }),
+    }), Effect.flatMap(session => Effect.fromNullable(session)))
+
+    const draft = {
       id: data.id,
       description: data.description,
       start: Date.now(),
@@ -50,13 +60,25 @@ function program(data: TaskStartParams, jobs: JobScheduler) {
       efficiency: calcEfficiency(0, data.aet),
       earnings: 0,
       aet: data.aet,
+      sessionId: currentSession._id,
     }
 
     yield* Effect.tryPromise({
-      try: async () => taskStorage.setValue(draft),
+      try: async () => convex.mutation(api.tasks.create, draft),
       catch: e => new TaskStartError({
         cause: e,
         message: 'Failed to set task',
+      }),
+    })
+
+    yield* Effect.tryPromise({
+      try: async () => taskDataStorage.setValue({
+        start: draft.start,
+        aet: draft.aet,
+      }),
+      catch: e => new TaskStartError({
+        cause: e,
+        message: 'Failed to set task start time',
       }),
     })
 
@@ -115,25 +137,21 @@ async function handleTaskTimer(jobs: JobScheduler) {
     type: 'interval',
     duration: 1000,
     execute: async () => {
-      const task = await taskStorage.getValue()
-      if (!task) return
+      const data = await taskDataStorage.getValue()
+      if (!data) return
 
-      await taskStorage.setValue(create(task, (draft) => {
-        draft.duration = draft.duration + 1
-        draft.efficiency = calcEfficiency(draft.duration, draft.aet)
-        draft.earnings = calcEarnings(draft.duration, 15)
-      }))
+      const duration = Duration.millis(Date.now() - data.start).pipe(Duration.parts)
 
       await browser.action.setBadgeText({
-        text: `${getRemainingTime(task.duration + 1, task.aet)}`,
+        text: `${getRemainingTime(duration.seconds, data.aet)}`,
       })
     },
 
   })
 }
 
-export async function handleTaskStart(data: TaskStartParams, jobs: JobScheduler) {
-  return program(data, jobs).pipe(Effect.runPromise)
+export async function handleTaskStart(data: TaskStartParams, jobs: JobScheduler, convex: ConvexClient) {
+  return program(data, jobs, convex).pipe(Effect.runPromise)
 }
 
 function getRemainingTime(rawDur: number, rawAet: number) {
