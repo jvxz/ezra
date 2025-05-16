@@ -1,0 +1,78 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Convex Project Setup for Ezra
+
+This guide covers the setup and configuration of Convex in the Ezra time-tracking application.
+
+## Installation
+
+The project uses Bun as its package manager. Install Convex with:
+
+```bash
+bun add convex
+```
+
+## Project Structure
+
+Essential files and directories:
+
+```
+/convex
+  ├── schema.ts        # Database schema
+  ├── sessions.ts      # Session operations
+  ├── tasks.ts         # Task operations
+  └── _generated/      # Generated types
+```
+
+## Development Workflow
+
+1. **Start the Development Server**
+   ```bash
+   npx convex dev
+   ```
+   This will:
+   - Connect to your Convex deployment
+   - Watch for changes in Convex functions
+   - Generate TypeScript types
+
+2. **Schema Updates**
+   - Edit [schema.ts](mdc:convex/schema.ts)
+   - Changes are automatically applied
+   - Types are regenerated
+
+3. **Function Development**
+   - Create/edit functions in domain files
+   - Hot reload is automatic
+   - TypeScript validation is immediate
+
+## Configuration
+
+The project uses TypeScript for type safety:
+
+```typescript
+// Example schema configuration
+export default defineSchema({
+  sessions: defineTable(sessionSchema),
+  tasks: defineTable(taskSchema),
+})
+```
+
+## Best Practices
+
+1. **Development**
+   - Keep Convex dev server running
+   - Use TypeScript for all files
+   - Follow the domain-driven structure
+
+2. **Type Safety**
+   - Use schema validators
+   - Import from `_generated/server`
+   - Leverage TypeScript features
+
+3. **Deployment**
+   - Test changes locally first
+   - Use `npx convex deploy`
+   - Monitor the dashboard

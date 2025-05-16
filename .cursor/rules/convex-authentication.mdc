@@ -1,0 +1,115 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Convex Authentication in Ezra
+
+Authentication in Ezra is handled through Convex's built-in authentication system.
+
+## Authentication Flow
+
+1. **Client-Side Setup**
+   ```typescript
+   import { ConvexProvider, useAuth } from 'convex/react'
+   
+   function App() {
+     return (
+       <ConvexProvider>
+         <AuthenticatedApp />
+       </ConvexProvider>
+     )
+   }
+   ```
+
+2. **Server-Side Auth**
+   ```typescript
+   // Example protected mutation
+   export const createSession = mutation({
+     args: {
+       description: v.string(),
+       start: v.number(),
+     },
+     handler: async (ctx, args) => {
+       const identity = await ctx.auth.getUserIdentity()
+       if (!identity) {
+         throw new Error('Not authenticated')
+       }
+       
+       return ctx.db.insert('sessions', {
+         ...args,
+         userId: identity.subject,
+         end: 'Active',
+       })
+     },
+   })
+   ```
+
+## Authorization Patterns
+
+1. **User-Specific Data**
+   ```typescript
+   // Query user's own sessions
+   export const getMySessions = query({
+     handler: async (ctx) => {
+       const identity = await ctx.auth.getUserIdentity()
+       if (!identity) return []
+       
+       return ctx.db
+         .query('sessions')
+         .filter(q => q.eq(q.field('userId'), identity.subject))
+         .collect()
+     },
+   })
+   ```
+
+2. **Access Control**
+   ```typescript
+   // Check ownership before updates
+   export const updateTask = mutation({
+     args: {
+       id: v.id('tasks'),
+       update: v.object({
+         description: v.optional(v.string()),
+         duration: v.optional(v.number()),
+       }),
+     },
+     handler: async (ctx, args) => {
+       const identity = await ctx.auth.getUserIdentity()
+       if (!identity) throw new Error('Not authenticated')
+       
+       const task = await ctx.db.get(args.id)
+       if (!task) throw new Error('Task not found')
+       
+       // Verify ownership through session
+       const session = await ctx.db.get(task.sessionId)
+       if (session?.userId !== identity.subject) {
+         throw new Error('Not authorized')
+       }
+       
+       return ctx.db.patch(args.id, args.update)
+     },
+   })
+   ```
+
+## Best Practices
+
+1. **Authentication**
+   - Always check identity in protected routes
+   - Handle unauthenticated states gracefully
+   - Use type-safe identity checks
+
+2. **Authorization**
+   - Implement ownership checks
+   - Use role-based access when needed
+   - Validate access at the data level
+
+3. **Security**
+   - Never expose sensitive data
+   - Validate all user input
+   - Keep auth state in sync
+
+4. **User Experience**
+   - Handle loading states
+   - Provide clear error messages
+   - Implement proper redirects

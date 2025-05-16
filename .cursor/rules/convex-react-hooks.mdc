@@ -1,0 +1,79 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Convex React Hooks in Ezra
+
+This project uses Convex React hooks for real-time data synchronization between the client and server.
+
+## Available Hooks
+
+### useQuery
+Used for reading data reactively:
+
+```typescript
+// Get current session with tasks
+const { session, tasks } = useQuery(api.sessions.pickCurrentSessionWithTasks)
+
+// Handle loading state
+if (!session) {
+  return <div>Loading...</div>
+}
+
+// Use the data
+return (
+  <div>
+    <h1>{session.description}</h1>
+    <TasksList tasks={tasks} />
+  </div>
+)
+```
+
+### useMutation
+Used for modifying data:
+
+```typescript
+// Create a new task
+const createTask = useMutation(api.tasks.create)
+
+const handleCreateTask = async (taskData) => {
+  await createTask({
+    sessionId: currentSession._id,
+    description: taskData.description,
+    // ... other task fields
+  })
+}
+```
+
+### useQuery with Arguments
+Used for parameterized queries:
+
+```typescript
+// Get tasks for a specific session
+const tasks = useQuery(api.sessions.pickWithTasks, { 
+  id: sessionId 
+})
+```
+
+## Best Practices
+
+1. **Loading States**
+   - Always handle undefined return values
+   - Show loading indicators when appropriate
+   - Provide fallback UI during data fetches
+
+2. **Error Handling**
+   - Use try/catch with mutations
+   - Show error messages to users
+   - Provide retry mechanisms
+
+3. **Optimistic Updates**
+   - Update UI immediately for better UX
+   - Handle rollback if mutation fails
+   - Keep local state in sync
+
+4. **Type Safety**
+   - Use generated types from `_generated/api`
+   - Leverage TypeScript for better DX
+   - Validate data shapes at runtime

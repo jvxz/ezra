@@ -1,0 +1,77 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Convex Overview for Ezra
+
+Ezra is a time-tracking application built with Convex as its backend. It manages sessions and tasks with real-time updates.
+
+## Project Structure
+
+The Convex backend is organized in the `/convex` directory:
+
+- [schema.ts](mdc:convex/schema.ts) - Defines the database schema for sessions and tasks
+- [sessions.ts](mdc:convex/sessions.ts) - Session-related queries and mutations
+- [tasks.ts](mdc:convex/tasks.ts) - Task-related queries and mutations
+- `/_generated` - Auto-generated TypeScript types and API endpoints
+
+## Core Features
+
+1. **Session Management**
+   - Create/end tracking sessions
+   - Track active session state
+   - Aggregate session statistics
+
+2. **Task Tracking**
+   - Create tasks within sessions
+   - Track task duration and efficiency
+   - Calculate earnings and metrics
+
+3. **Real-time Updates**
+   - Live session status
+   - Automatic task synchronization
+   - Instant metric calculations
+
+## Data Model
+
+1. **Sessions**
+   - Unique identifier
+   - Description
+   - Start/end timestamps
+   - Active status tracking
+
+2. **Tasks**
+   - Session association
+   - Duration tracking
+   - Efficiency metrics
+   - Earnings calculation
+
+## Best Practices
+
+1. **Code Organization**
+   - Domain-driven file structure
+   - Clear separation of concerns
+   - Type-safe operations
+
+2. **Data Operations**
+   - Atomic transactions
+   - Real-time synchronization
+   - Efficient queries
+
+3. **Type Safety**
+   - Schema validation
+   - TypeScript integration
+   - Generated type definitions
+
+## Key Concepts
+
+1. **Schema** - Defines database tables and their fields
+2. **Queries** - Read-only functions to fetch data
+3. **Mutations** - Functions that modify data
+4. **Actions** - Functions that can call external APIs
+
+## Common Commands
+
+- `npx convex dev` - Start the development server and connect to your Convex deployment
+- `npx convex dashboard` - Open the Convex dashboard in a browser

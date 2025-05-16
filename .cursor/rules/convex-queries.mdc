@@ -1,0 +1,92 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Convex Queries in Ezra
+
+The project uses several types of queries defined in [sessions.ts](mdc:convex/sessions.ts) and [tasks.ts](mdc:convex/tasks.ts).
+
+## Query Types
+
+### Basic Collection Queries
+```typescript
+// Get all sessions
+export const collect = query({
+  args: {},
+  handler: async (ctx) => {
+    return ctx.db.query('sessions').collect()
+  },
+})
+```
+
+### Filtered Queries
+```typescript
+// Get current active session
+export const pickCurrentSession = query({
+  args: {},
+  handler: async (ctx) => {
+    return ctx.db.query('sessions')
+      .filter(q => q.eq(q.field('end'), 'Active'))
+      .first()
+  },
+})
+```
+
+### Relationship Queries
+```typescript
+// Get tasks for a specific session
+export const pickWithTasks = query({
+  args: {
+    id: v.id("sessions"),
+  },
+  handler: async (ctx, args) => {
+    return ctx.db.query('tasks')
+      .filter(q => q.eq(q.field('sessionId'), args.id))
+      .collect()
+  },
+})
+```
+
+### Aggregated Queries
+```typescript
+// Get sessions with aggregated task data
+export const collectWithTasks = query({
+  args: {},
+  handler: async (ctx) => {
+    const sessions = await ctx.db.query('sessions').collect()
+    const tasks = await ctx.db.query('tasks').collect()
+
+    const duration = tasks.reduce((acc, task) => acc + task.duration, 0)
+    const aet = tasks.reduce((acc, task) => acc + task.aet, 0)
+    const efficiency = calcEfficiency(duration, aet)
+    const earnings = tasks.reduce((acc, task) => acc + task.earnings, 0)
+
+    return sessions.map(session => ({
+      ...session,
+      tasks: tasks.filter(task => task.sessionId === session._id),
+      duration,
+      earnings,
+      efficiency,
+      aet
+    }))
+  },
+})
+```
+
+## Best Practices
+
+1. **Query Organization**
+   - Group related queries in domain-specific files
+   - Use descriptive names that indicate the query's purpose
+   - Keep queries focused and single-purpose
+
+2. **Performance**
+   - Use `filter()` to reduce data on the server
+   - Use `first()` when only one result is needed
+   - Consider using indexes for frequently filtered fields
+
+3. **Type Safety**
+   - Define argument types using Convex validators
+   - Use TypeScript for better type inference
+   - Leverage generated types from `_generated/server`

@@ -1,0 +1,79 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Convex Mutations in Ezra
+
+The project implements mutations for managing sessions and tasks in [sessions.ts](mdc:convex/sessions.ts) and [tasks.ts](mdc:convex/tasks.ts).
+
+## Mutation Types
+
+### Create Operations
+```typescript
+// Create a new session
+export const create = mutation({
+  args: {
+    ...schema.tables.sessions.validator.fields
+  },
+  handler: async (ctx, session) => {
+    return ctx.db.insert('sessions', session)
+  },
+})
+```
+
+### Delete Operations
+```typescript
+// Remove a session
+export const remove = mutation({
+  args: {
+    id: v.id("sessions"),
+  },
+  handler: async (ctx, args) => {
+    return ctx.db.delete(args.id)
+  },
+})
+```
+
+### Update Operations
+```typescript
+// End the current active session
+export const endCurrentSession = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const session = await ctx.db.query('sessions')
+      .filter(q => q.eq(q.field('end'), 'Active'))
+      .first()
+
+    if (!session) {
+      throw new Error('No active session found')
+    }
+
+    return ctx.db.patch(session._id, {
+      end: Date.now(),
+    })
+  },
+})
+```
+
+## Best Practices
+
+1. **Schema Validation**
+   - Reuse schema validators from schema.ts
+   - Use `v.id()` for document references
+   - Validate all input data
+
+2. **Error Handling**
+   - Check for existence before updates/deletes
+   - Throw descriptive error messages
+   - Handle edge cases explicitly
+
+3. **Data Consistency**
+   - Use transactions when needed
+   - Update related data atomically
+   - Maintain referential integrity
+
+4. **Type Safety**
+   - Use TypeScript for better type checking
+   - Leverage Convex's type system
+   - Use generated types from `_generated/server`

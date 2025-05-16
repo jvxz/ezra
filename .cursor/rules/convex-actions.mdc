@@ -1,0 +1,81 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Convex Actions in Ezra
+
+Actions in Ezra are used for operations that need to interact with external systems while maintaining access to the database.
+
+## Action Structure
+
+```typescript
+import { action } from './_generated/server'
+import { v } from 'convex/values'
+
+export const externalCalculation = action({
+  args: {
+    sessionId: v.id('sessions'),
+    taskId: v.id('tasks'),
+  },
+  handler: async (ctx, args) => {
+    // 1. Get the data from the database
+    const task = await ctx.runQuery(api.tasks.get, { id: args.taskId })
+    
+    // 2. Call external API
+    const response = await fetch('https://api.example.com/calculate', {
+      method: 'POST',
+      body: JSON.stringify(task),
+    })
+    const result = await response.json()
+    
+    // 3. Store results back in the database
+    await ctx.runMutation(api.tasks.update, {
+      id: args.taskId,
+      efficiency: result.efficiency,
+      earnings: result.earnings,
+    })
+    
+    return result
+  },
+})
+```
+
+## Common Use Cases
+
+1. **External APIs**
+   - Third-party calculations
+   - Data enrichment
+   - External validations
+
+2. **File Operations**
+   - Report generation
+   - Data export
+   - File processing
+
+3. **Complex Operations**
+   - Multi-step processes
+   - External + database operations
+   - Scheduled tasks
+
+## Best Practices
+
+1. **Error Handling**
+   - Handle API failures gracefully
+   - Provide meaningful error messages
+   - Implement retry mechanisms
+
+2. **Data Consistency**
+   - Use transactions when needed
+   - Validate external data
+   - Handle partial failures
+
+3. **Security**
+   - Validate input data
+   - Secure API credentials
+   - Follow least privilege principle
+
+4. **Performance**
+   - Cache when possible
+   - Handle timeouts
+   - Optimize database operations

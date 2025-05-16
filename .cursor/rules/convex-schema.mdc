@@ -1,0 +1,42 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Convex Schema
+
+The schema defines the structure of your database tables and the relationships between them.
+
+## Tables
+
+In [schema.ts](mdc:convex/schema.ts), the project defines two tables:
+
+1. **Sessions** - Represents work sessions
+   - `id`: string identifier
+   - `description`: description of the session
+   - `start`: timestamp when the session started
+   - `end`: timestamp when the session ended or "Active" if ongoing
+
+2. **Tasks** - Represents tasks performed during sessions
+   - `sessionId`: reference to a session (foreign key)
+   - `id`: string identifier
+   - `description`: description of the task
+   - `aet`: number (possibly "actual elapsed time")
+   - `start`: timestamp when the task started
+   - `duration`: how long the task took
+   - `efficiency`: numeric rating of efficiency
+   - `earnings`: monetary value earned
+
+## Schema Definition
+
+Convex schemas are defined using the `defineSchema` and `defineTable` functions from 'convex/server', with field validators from 'convex/values'.
+
+Example:
+```typescript
+defineSchema({
+  sessions: defineTable(sessionSchema),
+  tasks: defineTable(taskSchema),
+})
+```
+
+You can add indexes for more efficient queries using `.index()` method.

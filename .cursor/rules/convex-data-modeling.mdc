@@ -1,0 +1,65 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Convex Data Modeling in Ezra
+
+This project uses Convex's document database with a focus on sessions and tasks tracking.
+
+## Schema Structure
+
+The schema is defined in [schema.ts](mdc:convex/schema.ts) with two main tables:
+
+### Sessions Table
+```typescript
+{
+  id: v.string(),
+  description: v.string(),
+  start: v.number(),
+  end: v.union(v.number(), v.literal('Active')),
+}
+```
+
+### Tasks Table
+```typescript
+{
+  sessionId: v.id('sessions'),
+  id: v.string(),
+  description: v.string(),
+  aet: v.number(),
+  start: v.number(),
+  duration: v.number(),
+  efficiency: v.number(),
+  earnings: v.number(),
+}
+```
+
+## Relationships
+
+1. **One-to-Many: Sessions to Tasks**
+   - Each session can have multiple tasks
+   - Tasks reference their parent session via `sessionId`
+   - Example query in [sessions.ts](mdc:convex/sessions.ts):
+   ```typescript
+   ctx.db.query('tasks')
+     .filter(q => q.eq(q.field('sessionId'), session._id))
+     .collect()
+   ```
+
+## Best Practices
+
+1. **Schema Validation**
+   - Use `v.string()`, `v.number()`, etc. for type safety
+   - Use `v.union()` for fields that can have multiple types
+   - Export schema objects for reuse in mutations
+
+2. **Relationship Queries**
+   - Use `filter()` with field equality for relationship lookups
+   - Join data in query handlers when needed
+   - Consider pagination for large result sets
+
+3. **Data Integrity**
+   - Use foreign key references (e.g., `sessionId`)
+   - Validate data types at the schema level
+   - Handle cascading deletes manually when needed
