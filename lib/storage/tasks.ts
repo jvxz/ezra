@@ -25,7 +25,7 @@ export interface Task {
   earnings: number
 }
 
-export const taskStorage = storage.defineItem<Task>('local:task')
+export const taskDataStorage = storage.defineItem<Pick<Task, 'aet' | 'start'>>('local:task-data')
 
 export const taskDraft: Task = {
   id: '',
