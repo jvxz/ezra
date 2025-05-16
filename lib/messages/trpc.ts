@@ -4,7 +4,6 @@ import { createTRPCProxyClient } from '@trpc/client'
 import { initTRPC } from '@trpc/server'
 import { ArkErrors } from 'arktype'
 import { chromeLink } from 'trpc-browser/link'
-import { getAllSessionData } from './get-all-session-data'
 import { getCurrentSessionData } from './get-current-session-data'
 import { handleStartSession } from './handle-start-session'
 import { handleStopSession } from './handle-stop-session'
@@ -19,23 +18,22 @@ const t = initTRPC.context<Context>().create({
 })
 
 export const appRouter = t.router({
-  getCurrentSessionData: t.procedure.query(async () => getCurrentSessionData()),
-  getAllSessionData: t.procedure.query(async () => getAllSessionData()),
-  startSession: t.procedure.query(async () => handleStartSession()),
-  stopSession: t.procedure.query(async () => handleStopSession()),
+  getCurrentSessionData: t.procedure.query(async ({ ctx }) => getCurrentSessionData(ctx.convex, ctx.rate)),
+  startSession: t.procedure.mutation(async ({ ctx }) => handleStartSession(ctx.convex)),
+  stopSession: t.procedure.mutation(async ({ ctx }) => handleStopSession(ctx.convex)),
   startTask: t.procedure.input(taskStartValidator).mutation(async ({ input, ctx }) => {
     if (input instanceof ArkErrors) {
       throw new TypeError(input.summary)
     }
 
-    return handleTaskStart(input, ctx.jobs)
+    return handleTaskStart(input, ctx.jobs, ctx.convex)
   }),
-  stopTask: t.procedure.input(taskStopValidator).mutation(async ({ input }) => {
+  stopTask: t.procedure.input(taskStopValidator).mutation(async ({ input, ctx }) => {
     if (input instanceof ArkErrors) {
       throw new TypeError(input.summary)
     }
 
-    return handleTaskStop(input.action, input.rate)
+    return handleTaskStop(input.action, ctx.rate, ctx.convex)
   }),
   test: t.procedure.query(async () => {
     return 'attempting to connect...'
