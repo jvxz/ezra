@@ -1,7 +1,11 @@
+import { env } from '@/env'
 import { handleTaskStop } from '@/lib/messages/handle-task-stop'
 import { usePrefsStore } from '@/lib/store/prefs'
+import { ConvexClient } from 'convex/browser'
 
 const RGX = /https:\/\/www.raterhub.com\/evaluation\/rater\/task\/commit/
+
+const convex = new ConvexClient(env.VITE_CONVEX_URL)
 
 export function handleTaskSubmit() {
   // browser.webRequest.onBeforeRequest.addListener(
@@ -23,7 +27,7 @@ export function handleTaskSubmit() {
       if (details.method === 'POST' && RGX.exec(details.url)) {
         const rate = usePrefsStore.getState().rate
 
-        void handleTaskStop('submit', rate)
+        void handleTaskStop('submit', rate, convex)
       }
     },
     {
