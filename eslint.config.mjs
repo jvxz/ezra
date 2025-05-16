@@ -1,4 +1,5 @@
 import antfu from '@antfu/eslint-config'
+import convexPlugin from '@convex-dev/eslint-plugin'
 import readableTailwind from 'eslint-plugin-readable-tailwind'
 
 export default antfu({
@@ -18,13 +19,20 @@ export default antfu({
     '**/node_modules/**',
     '**/dist/**',
     '**/.next/**',
+    '**/convex/**',
   ],
 
   plugins: {
     'readable-tailwind': readableTailwind,
+    '@convex-dev': convexPlugin,
   },
 
   rules: {
+    '@convex-dev/no-missing-args-validator': 'off',
+    '@convex-dev/no-args-without-validator': 'error',
+    '@convex-dev/import-wrong-runtime': 'off',
+    '@convex-dev/no-old-registered-function-syntax': 'error',
+
     'style/jsx-quotes': ['error', 'prefer-double'],
     'style/quotes': ['error', 'single'],
 
@@ -98,5 +106,6 @@ export default antfu({
     'node/prefer-global/process': 'off',
     'react-refresh/only-export-components': 'off',
     'unicorn/throw-new-error': 'off',
+
   },
 })
