@@ -2,7 +2,7 @@ import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useCurrentSession } from '@/lib/hooks/use-current-session'
 import { useStatus } from '@/lib/hooks/use-status'
-import { formatDuration } from '@/lib/utils'
+import { formatDuration, formatEfficiency } from '@/lib/utils'
 
 function TimeInfo() {
   return (
@@ -46,7 +46,7 @@ function SessionTabContent() {
                 Elapsed time
               </div>
               <span className="font-mono text-lg font-medium">
-                {formatDuration(currentSession.duration, 'secs') === '0' ? '0s' : formatDuration(currentSession.duration, 'secs')}
+                {formatDuration(currentSession.taskData.duration, 'secs') === '0' ? '0s' : formatDuration(currentSession.taskData.duration, 'secs')}
               </span>
             </div>
             <div className="flex flex-col gap-1">
@@ -55,7 +55,7 @@ function SessionTabContent() {
                 Efficiency
               </div>
               <span className="font-mono text-lg font-medium text-amber-500">
-                {currentSession.efficiency}%
+                {formatEfficiency(currentSession.taskData.efficiency)}
               </span>
             </div>
             <div className="flex flex-col gap-1">
@@ -64,7 +64,7 @@ function SessionTabContent() {
                 Total tasks
               </div>
               <span className="font-mono text-lg font-medium">
-                {currentSession.taskCount}
+                {currentSession.sessionData.tasks.length}
               </span>
             </div>
             <div className="flex flex-col gap-1">
@@ -77,7 +77,7 @@ function SessionTabContent() {
                   style: 'currency',
                   currency: 'USD',
                   minimumFractionDigits: 2,
-                }).format(currentSession.earnings)}
+                }).format(currentSession.taskData.earnings)}
               </span>
             </div>
           </div>

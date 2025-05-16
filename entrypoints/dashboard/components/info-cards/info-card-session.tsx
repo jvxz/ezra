@@ -68,20 +68,20 @@ function InfoCardSession() {
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Elapsed time</h2>
             <div className="text-xl font-medium">
-              {formatDuration(data.duration, 'secs') === '0' ? '0s' : formatDuration(data.duration, 'secs')}
+              {formatDuration(data.taskData.duration, 'secs') === '0' ? '0s' : formatDuration(data.taskData.duration, 'secs')}
             </div>
           </div>
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Efficiency</h2>
-            <div className={`text-xl font-medium ${getEfficiencyColor(data.efficiency, data.duration)}`}>
-              {formatEfficiency(data.efficiency)}
+            <div className={`text-xl font-medium ${getEfficiencyColor(data.taskData.efficiency, data.taskData.duration)}`}>
+              {formatEfficiency(data.taskData.efficiency)}
             </div>
           </div>
 
           <div className="space-y-2">
             <h2 className="text-muted-foreground text-base font-medium">Total tasks</h2>
             <div className="text-xl font-medium">
-              {data.taskCount}
+              {data.sessionData.tasks.length}
             </div>
           </div>
           <div className="space-y-2">
@@ -91,7 +91,7 @@ function InfoCardSession() {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 2,
-              }).format(data.earnings)}
+              }).format(data.taskData.earnings)}
             </div>
           </div>
         </div>

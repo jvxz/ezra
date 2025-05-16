@@ -1,19 +1,20 @@
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuSeparator, ContextMenuTrigger } from '@/components/ui/context-menu'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
-import { useAllSessions } from '@/lib/hooks/use-all-sessions'
+import { api } from '@/convex/_generated/api'
 import { useDragSelect } from '@/lib/hooks/use-drag-select'
 import { cn, formatDuration, formatEfficiency, formatTimestamp, getEfficiencyColor } from '@/lib/utils'
+import { useQuery } from 'convex/react'
 import { Suspense, useMemo } from 'react'
 import { TableSessionsFooter } from './table-sessions-footer'
 
 function TableSessions() {
-  const { data } = useAllSessions()
+  const sessions = useQuery(api.sessions.collectWithTasks)
   const selectedItems = useDragSelect()
   const sortedItems = useMemo(() => {
-    return data?.sort((a, b) => {
+    return sessions?.sort((a, b) => {
       return b.start - a.start
     })
-  }, [data])
+  }, [sessions])
 
   return (
     <div className="grow overflow-auto rounded border select-none">

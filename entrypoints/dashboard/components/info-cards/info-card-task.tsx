@@ -6,7 +6,7 @@ import { formatDuration, getTaskProgress } from '@/lib/utils'
 function InfoCardTask() {
   const { data } = useTask()
 
-  if (!data) {
+  if (!data?.currentTaskData) {
     return (
       <Card>
         <CardHeader>
@@ -40,7 +40,7 @@ function InfoCardTask() {
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Task</CardTitle>
         <p className="text-muted-foreground animate-in fade-in-0 slide-in-from-right-50 text-sm duration-150">
-          {data.description}
+          {data.currentTaskData.description }
         </p>
       </CardHeader>
       <CardContent>
@@ -49,29 +49,27 @@ function InfoCardTask() {
             <div className="flex items-center gap-2">
               <span className="iconify icon-[ph--clock-countdown] text-lg" />
               <p className="text-muted-foreground text-sm">
-                {formatDuration(data.duration, 'secs')}
+                {formatDuration(data.currentTaskData.duration, 'secs')}
               </p>
             </div>
             <div className="flex items-center gap-2">
               <span className="iconify icon-[ph--warning] text-lg" />
               <p
-                data-state={getTaskProgress(data.duration, data.aet) === 100 ? 'over' : 'under'}
+                data-state={getTaskProgress(data.currentTaskData.duration, data.currentTaskData.aet) === 100 ? 'over' : 'under'}
                 className="text-muted-foreground text-sm"
               >
-                {formatDuration(data.aet, 'mins')}
+                {formatDuration(data.currentTaskData.aet, 'mins')}
               </p>
             </div>
           </div>
           <Progress
-            data-state={getTaskProgress(data.duration, data.aet) === 100 ? 'over' : 'under'}
-            value={getTaskProgress(data.duration, data.aet)}
+            data-state={getTaskProgress(data.currentTaskData.duration, data.currentTaskData.aet) === 100 ? 'over' : 'under'}
+            value={getTaskProgress(data.currentTaskData.duration, data.currentTaskData.aet)}
           />
         </div>
       </CardContent>
     </Card>
   )
 }
-
-
 
 export { InfoCardTask }
